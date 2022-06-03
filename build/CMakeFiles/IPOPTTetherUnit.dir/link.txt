@@ -1,0 +1,2 @@
+/usr/bin/ar qc ../lib/static/libIPOPTTetherUnit.a CMakeFiles/IPOPTTetherUnit.dir/src/tether_units/IPOPTTetherUnit.cpp.o
+/usr/bin/ranlib ../lib/static/libIPOPTTetherUnit.a
