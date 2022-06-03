@@ -55,6 +55,7 @@ class IntegrationInterface {
     public: 
        
         IntegrationInterface(sim_solver_capsule* capsule_);
+        IntegrationInterface(); 
         virtual ~IntegrationInterface();
         Eigen::MatrixXd integrate(Eigen::MatrixXd x0);
         
