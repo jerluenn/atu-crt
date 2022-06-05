@@ -28,6 +28,26 @@ Eigen::Matrix<double, 3, 1> MathUtils::so3toVec(Eigen::Matrix3d so3mat) {
 
 }
 
+Eigen::Matrix3d MathUtils::quat2Rot(Eigen::Matrix<double, 4, 1> eta) 
+
+{
+
+    Eigen::Matrix3d R;
+
+    R(0,0) = 2*(pow(eta(0,0),2) + pow(eta(1,0),2)) - 1;
+    R(0,1) = 2*(eta(1,0)*eta(2,0) - eta(0,0)*eta(3,0));
+    R(0,2) = 2*(eta(1,0)*eta(3,0) + eta(0,0)*eta(2,0));
+    R(1,0) = 2*(eta(1,0)*eta(2,0) + eta(0,0)*eta(3,0));
+    R(1,1) = 2*(pow(eta(0,0),2) + pow(eta(2,0),2)) - 1;
+    R(1,2) = 2*(eta(2,0)*eta(3,0) - eta(0,0)*eta(1,0));
+    R(2,0) = 2*(eta(1,0)*eta(3,0) - eta(0,0)*eta(2,0));
+    R(2,1) = 2*(eta(2,0)*eta(3,0) + eta(0,0)*eta(1,0));
+    R(2,2) = 2*(pow(eta(0,0),2) + pow(eta(3,0),2)) - 1;
+
+    return R;
+
+}
+
 Eigen::Matrix<double, 6, 1> MathUtils::se3toVec(Eigen::Matrix4d se3mat) {
 
     Eigen::Matrix<double, 6, 1> Vec; 

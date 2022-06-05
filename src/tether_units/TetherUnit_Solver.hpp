@@ -24,7 +24,7 @@ class TetherUnit_Solver
 
     public: 
 
-        TetherUnit_Solver(IntegrationInterface* integrator_, IntegrationInterface* integratorsStep_, double mass_distribution_, double tether_length_, unsigned int num_integrationSteps_);
+        TetherUnit_Solver(IntegrationInterface* integrator_, IntegrationInterface* integratorStep_, double mass_distribution_, double tether_length_, unsigned int num_integrationSteps_);
         TetherUnit_Solver(); 
         virtual ~TetherUnit_Solver(); 
         Eigen::MatrixXd getProximalStates();
@@ -32,20 +32,31 @@ class TetherUnit_Solver
         void setInitialConditions(Eigen::MatrixXd initialConditions); 
         Eigen::MatrixXd integrateDistalStates(); 
         Eigen::MatrixXd integrateFullStates();
+        Eigen::MatrixXd integrateWithIncrement(unsigned int index);
+        Eigen::Matrix<double, 6, 1> getBoundaryConditions();
+        Eigen::Matrix<double, 6, 1> getBoundaryConditions_IncreaseWrenchTip(unsigned int index);
+        Eigen::Matrix<double, 6, 1> getBoundaryConditions(Eigen::MatrixXd distalConditions_);
+        Eigen::Matrix<double, 6, 1> getPointForceMoment(); 
+        Eigen::Matrix<double, 6, 1> setPointForceMoment(Eigen::Matrix<double, 6, 1> p_FM);
         void setTau(double tau); 
         void SolveJacobians(); 
 
     private: 
 
         Eigen::MatrixXd fullStates; 
-        Eigen::MatrixXd Jacobians_ChangeName; 
+        Eigen::MatrixXd E_yu, B_yu, E_w_tip, B_w_tip, J_w_tip, yu_dot_w_tip; 
         Eigen::MatrixXd distalStates;
         Eigen::MatrixXd proximalStates;
+        Eigen::MatrixXd dummyStates;
+        Eigen::Matrix<double, 6, 1> pointForceMoment; // external tip wrench.
         double mass_distribution; 
         double tether_length;
         const unsigned int numStates = 17; 
+        unsigned int num_p, num_eta, num_int_wrench, num_alpha, num_curvature, num_kappa, num_tau;
+        Eigen::MatrixXd R_dynamic; 
         unsigned int num_integrationSteps;
         constexpr static double g = 9.81; 
+        constexpr static double EPS = 1e-10;
         IntegrationInterface* integrator;
         IntegrationInterface* integratorStep;
 

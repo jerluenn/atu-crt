@@ -75,7 +75,7 @@ int tetherunit_integrator_acados_sim_create(sim_solver_capsule * capsule)
     int nz = 0;
 
     
-    double Tsim = 2.5;
+    double Tsim = 2.3;
 
     
     // explicit ode
@@ -127,7 +127,7 @@ int tetherunit_integrator_acados_sim_create(sim_solver_capsule * capsule)
 
     tmp_int = 4;
     sim_opts_set(tetherunit_integrator_sim_config, tetherunit_integrator_sim_opts, "num_stages", &tmp_int);
-    tmp_int = 40;
+    tmp_int = 50;
     sim_opts_set(tetherunit_integrator_sim_config, tetherunit_integrator_sim_opts, "num_steps", &tmp_int);
 
     // options that are not available to AcadosOcpSolver

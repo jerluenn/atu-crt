@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
-  "../bin/TetherUnitTest"
-  "../bin/TetherUnitTest.pdb"
   "CMakeFiles/TetherUnitTest.dir/tests/TetherUnitTest.cpp.o"
+  "../bin/TetherUnitTest.pdb"
+  "../bin/TetherUnitTest"
 )
 
 # Per-language clean rules from dependency scanning.
