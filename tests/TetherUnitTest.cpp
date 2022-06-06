@@ -15,9 +15,37 @@ int main ()
 
     IntegrationInterface i1(capsule), i2(capsule_step);
 
-    TetherUnit_Solver tetherobject(&i1, &i2, 0.035, 2.5, 50); 
+    TetherUnit_Solver tetherobject(&i1, &i2, 0.035, 2.3, 50); 
 
-    std::cout << tetherobject.integrateDistalStates(); 
+    Eigen::Matrix<double, 6, 1> tipWrench; 
+
+    // tipWrench << 0.02, 0.0, 0.0, 0.0, -0.01, 0.0;
+    tipWrench << 0.01, 0.0, 0.0, 0.0, -0.005, 0.0; 
+
+    tetherobject.timer.tic();
+
+    std::cout.precision(10);
+
+    std::cout << "Distal states: " << tetherobject.integrateDistalStates() << "\n\n"; 
+
+    std::cout << "Boundary conditions" << tetherobject.getBoundaryConditions() << "\n\n";
+
+    for (int i = 0; i < 2200; ++i) 
+    
+    {
+
+        tetherobject.simulateStep(tipWrench);
+
+    }
+
+    tetherobject.timer.toc();
+
+    std::cout << "Proximal states: " << tetherobject.getProximalStates() << "\n\n";
+
+    std::cout << "Distal states: " << tetherobject.integrateDistalStates() << "\n\n"; 
+
+    std::cout << "Boundary conditions" << tetherobject.getBoundaryConditions() << "\n\n";
+    
 
     // IpoptSolver ipopt;
 

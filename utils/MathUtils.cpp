@@ -66,7 +66,7 @@ Eigen::MatrixXd MathUtils::forwardFiniteDifferences(Eigen::MatrixXd mat, Eigen::
 
     derivative = (mat_plus - mat).array() / eps; 
 
-    std::cout.precision(5);
+    std::cout.precision(10);
 
     // std::cout << "mat_plus: " << derivative << std::endl;
     // std::cout << "mat: " << mat << std::endl;

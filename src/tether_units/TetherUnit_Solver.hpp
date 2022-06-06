@@ -29,17 +29,20 @@ class TetherUnit_Solver
         virtual ~TetherUnit_Solver(); 
         Eigen::MatrixXd getProximalStates();
         Eigen::MatrixXd getFullStates();
+        Eigen::MatrixXd integrateDistalStates();
         void setInitialConditions(Eigen::MatrixXd initialConditions); 
-        Eigen::MatrixXd integrateDistalStates(); 
-        Eigen::MatrixXd integrateFullStates();
-        Eigen::MatrixXd integrateWithIncrement(unsigned int index);
+
         Eigen::Matrix<double, 6, 1> getBoundaryConditions();
         Eigen::Matrix<double, 6, 1> getBoundaryConditions_IncreaseWrenchTip(unsigned int index);
         Eigen::Matrix<double, 6, 1> getBoundaryConditions(Eigen::MatrixXd distalConditions_);
-        Eigen::Matrix<double, 6, 1> getPointForceMoment(); 
-        Eigen::Matrix<double, 6, 1> setPointForceMoment(Eigen::Matrix<double, 6, 1> p_FM);
+        Eigen::Matrix<double, 6, 1> getTipWrench(); 
+        Eigen::Matrix<double, 6, 1> setTipWrench(Eigen::Matrix<double, 6, 1> p_FM);
+        // Eigen::Matrix<double, 6, 1> 
         void setTau(double tau); 
-        void SolveJacobians(); 
+        void solveJacobians(); 
+        void simulateStep(Eigen::Matrix<double, 6, 1> tip_wrench);
+
+        MathUtils::Timer timer;
 
     private: 
 
@@ -48,7 +51,10 @@ class TetherUnit_Solver
         Eigen::MatrixXd distalStates;
         Eigen::MatrixXd proximalStates;
         Eigen::MatrixXd dummyStates;
-        Eigen::Matrix<double, 6, 1> pointForceMoment; // external tip wrench.
+         
+        Eigen::MatrixXd integrateFullStates();
+        Eigen::MatrixXd integrateWithIncrement(unsigned int index);
+        Eigen::Matrix<double, 6, 1> tipWrench; // external tip wrench.
         double mass_distribution; 
         double tether_length;
         const unsigned int numStates = 17; 
@@ -59,6 +65,7 @@ class TetherUnit_Solver
         constexpr static double EPS = 1e-10;
         IntegrationInterface* integrator;
         IntegrationInterface* integratorStep;
+        double dt = 0.01;
 
 };
 
