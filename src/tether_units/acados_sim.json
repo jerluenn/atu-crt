@@ -28,7 +28,7 @@
         "sim_method_jac_reuse": false,
         "sim_method_newton_iter": 3,
         "sim_method_num_stages": 4,
-        "sim_method_num_steps": 5,
+        "sim_method_num_steps": 1,
         "tf": null
     }
 }

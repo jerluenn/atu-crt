@@ -207,7 +207,8 @@ class TetherUnit:
         tau_dot = -self._Kappa*self._tau*norm_2(self._u)
         alpha_dot = 1
         kappa_dot = 0
-        u_dot = norm_2(jacobian(self._u, self._m) @ m_dot + jacobian(self._u, self._eta) @ eta_dot)
+        u_dot = 0
+        # u_dot = norm_2(jacobian(self._u, self._m) @ m_dot + jacobian(self._u, self._eta) @ eta_dot)
         # u_dot = norm_2(inv(-self._Kbt)@((skew(self._u)@self._Kbt@self._u) + skew(self._v)@transpose(self._R)@self._n))
 
         x = vertcat(self._p, self._eta, self._n, self._m, self._tau, self._alpha, self._Kappa, self._curvature)
@@ -266,7 +267,8 @@ class TetherUnit:
         tau_dot = -self._Kappa*self._tau*norm_2(self._u)
         alpha_dot = 1
         kappa_dot = 0
-        u_dot = norm_2(jacobian(self._u, self._m) @ m_dot + jacobian(self._u, self._eta) @ eta_dot)
+        u_dot = 0
+        # u_dot = norm_2(jacobian(self._u, self._m) @ m_dot + jacobian(self._u, self._eta) @ eta_dot)
         # u_dot = norm_2(inv(-self._Kbt)@((skew(self._u)@self._Kbt@self._u) + skew(self._v)@transpose(self._R)@self._n))
 
         x = vertcat(self._p, self._eta, self._n, self._m, self._tau, self._alpha, self._Kappa, self._curvature)
@@ -297,7 +299,7 @@ class TetherUnit:
         sim.solver_options.T = Sf
         sim.solver_options.integrator_type = 'ERK'
         sim.solver_options.num_stages = 4
-        sim.solver_options.num_steps = 5
+        sim.solver_options.num_steps = 1
         acados_integrator = AcadosSimSolver(sim)
 
         self._stepIntegrator = acados_integrator

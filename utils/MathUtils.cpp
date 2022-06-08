@@ -75,6 +75,16 @@ Eigen::MatrixXd MathUtils::forwardFiniteDifferences(Eigen::MatrixXd mat, Eigen::
 
 }
 
+Eigen::Quaterniond MathUtils::rot2quat(Eigen::Matrix3d rot) 
+
+{
+
+    Eigen::Quaterniond eta(rot);
+
+    return eta; 
+
+}
+
 Eigen::Matrix<double, 3, 3> MathUtils::skew_v(Eigen::Vector<double, 3> v) 
 
 {

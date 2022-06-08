@@ -104,8 +104,10 @@ class TetherUnitBoundarySolver:
         for i in range(self.integration_steps): 
             
             self.tetherObject._stepIntegrator.set('x', states_i)
+            t = time.time()
             self.tetherObject._stepIntegrator.solve()
             states_i = self.tetherObject._stepIntegrator.get('x')
+            # print(f"One integration step of a 1 step: {time.time() - t}")
             self.poseData[i + 1, :] = states_i[0:7]
             self.arcData[i + 1, :] = states_i[14]
             self.internalWrenchData[i + 1, :] = states_i[7:13]
@@ -202,8 +204,8 @@ if __name__ == "__main__":
     distalPose = np.array([-0.6, 0, 0.485, 1, 0, 0, 0])
     testClass = TetherUnitBoundarySolver(robot_dict, initConditions, distalPose)
     # testClass.solveBVP(True, True)
-    initConditions = np.array([0, 0, 0, 1, 0, 0, 0, 1.009704982, -7.21548500e-26, -3.62844316e-33, 4.22730307e-26,
-   0.2095755754, -1.91589977e-24, 5, 0, 0.05, 0])
+    initConditions = np.array([0, 0, 0, 1, 0, 0, 0, 0.9777671985, 0, 0, 0,
+    0.2053095809, 0, 5, 0, 0.05, 0])
     test_Function(testClass, initConditions)
     test_Function2(testClass, testClass.initConditions)
     eig = getEigenvalues(testClass, testClass.initConditions)

@@ -37,17 +37,17 @@ class TetherUnit_Solver
         Eigen::Matrix<double, 6, 1> getBoundaryConditions(Eigen::MatrixXd distalConditions_);
         Eigen::Matrix<double, 6, 1> getTipWrench(); 
         Eigen::Matrix<double, 6, 1> setTipWrench(Eigen::Matrix<double, 6, 1> p_FM);
-        // Eigen::Matrix<double, 6, 1> 
+        void updateTipWrench(Eigen::Matrix<double, 6, 1> twist);
+        void simulateStep(Eigen::Matrix<double, 6, 1> tip_wrench);
         void setTau(double tau); 
         void solveJacobians(); 
-        void simulateStep(Eigen::Matrix<double, 6, 1> tip_wrench);
 
         MathUtils::Timer timer;
 
     private: 
 
         Eigen::MatrixXd fullStates; 
-        Eigen::MatrixXd E_yu, B_yu, E_w_tip, B_w_tip, J_w_tip, yu_dot_w_tip; 
+        Eigen::MatrixXd E_yu, B_yu, E_w_tip, B_w_tip, J_w_tip, yu_dot_w_tip, eta_dot, w_tip_dot, J_w_tip_eta; 
         Eigen::MatrixXd distalStates;
         Eigen::MatrixXd proximalStates;
         Eigen::MatrixXd dummyStates;

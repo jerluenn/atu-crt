@@ -127,7 +127,7 @@ int tetherunit_stepIntegrator_acados_sim_create(sim_solver_capsule * capsule)
 
     tmp_int = 4;
     sim_opts_set(tetherunit_stepIntegrator_sim_config, tetherunit_stepIntegrator_sim_opts, "num_stages", &tmp_int);
-    tmp_int = 5;
+    tmp_int = 1;
     sim_opts_set(tetherunit_stepIntegrator_sim_config, tetherunit_stepIntegrator_sim_opts, "num_steps", &tmp_int);
 
     // options that are not available to AcadosOcpSolver

@@ -24,9 +24,14 @@ TetherUnit_Solver::TetherUnit_Solver(IntegrationInterface* integrator_, Integrat
     B_yu.resize(6, 6); 
     B_yu.setZero();
     B_w_tip.resize(6, 6); 
+    B_w_tip.setIdentity(); 
+    B_w_tip *= -1; 
     E_w_tip.resize(6, 6); 
     J_w_tip.resize(6, 6); 
+    J_w_tip_eta.resize(7, 6);
+    w_tip_dot.resize(6, 6);
     yu_dot_w_tip.resize(6, 6);
+    eta_dot.resize(4, 6);
 
     dummyStates.resize(numStates, 1);
     tipWrench << 0, 0, 0, 0, 0, 0;
@@ -189,6 +194,27 @@ void TetherUnit_Solver::simulateStep(Eigen::Matrix<double, 6, 1> tip_wrench)
 
 }
 
+void TetherUnit_Solver::updateTipWrench(Eigen::Matrix<double, 6, 1> twist) 
+
+{
+
+    Eigen::Matrix<double, 6, 1> db; 
+    Eigen::Matrix<double, 6, 1> d_tipwrench; 
+
+    solveJacobians();
+ 
+    d_tipwrench = w_tip_dot * twist; 
+    db = yu_dot_w_tip * d_tipwrench;
+
+    proximalStates.block<6, 1>(7, 0) += db * dt; 
+
+    tipWrench += d_tipwrench * dt;
+
+    integrateDistalStates();
+
+
+}
+
 void TetherUnit_Solver::solveJacobians() 
 
 {
@@ -205,6 +231,13 @@ void TetherUnit_Solver::solveJacobians()
     rotation = MathUtils::quat2Rot(eta);
 
     Eigen::Matrix<double, 6, 1> BC, BC_Plus; 
+
+    Eigen::MatrixXd conv(4, 3);
+    Eigen::Matrix3d I_3x3; 
+    I_3x3.setIdentity();
+
+    Eigen::Matrix<double, 6, 6> I_6x6; 
+    I_6x6.setIdentity();
 
     BC = getBoundaryConditions();
 
@@ -250,17 +283,21 @@ void TetherUnit_Solver::solveJacobians()
 
     }
 
-    // std::cout << "B_yu: " << B_yu << "\n\n";
-    // std::cout << "B_w_tip: " << B_w_tip << "\n\n";
-
-    Eigen::Matrix<double, 6, 6> B_w_tip_test; 
-    B_w_tip_test.setIdentity(); 
-    B_w_tip_test *= -1; 
-
     // std::cout << "B_w_tip_test: " << B_w_tip_test << "\n\n";
 
     // std::cout << "pinv(B_yu)*B_yu" << B_yu.completeOrthogonalDecomposition().pseudoInverse()*B_yu << "\n\n";
 
-    yu_dot_w_tip = -B_yu.completeOrthogonalDecomposition().pseudoInverse()*B_w_tip_test;
+    yu_dot_w_tip = -B_yu.completeOrthogonalDecomposition().pseudoInverse()*B_w_tip;
+
+    J_w_tip = E_yu * yu_dot_w_tip;
+
+    w_tip_dot = (J_w_tip.transpose()*J_w_tip + 0.1*I_6x6).inverse()*J_w_tip.transpose();
+
+    conv.block<1, 3>(0, 0) = -eta.segment<3>(1).transpose();
+    conv.block<3, 3>(1, 0) = eta(0) * I_3x3 + MathUtils::skew_m(eta.segment<3>(1));
+    eta_dot = conv*J_w_tip.block<3, 6>(3, 0);
+
+    J_w_tip_eta << J_w_tip.block<3, 6>(0,0), eta_dot;
+
 
 }
