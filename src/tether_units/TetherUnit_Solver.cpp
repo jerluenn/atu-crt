@@ -174,19 +174,21 @@ void TetherUnit_Solver::simulateStep(Eigen::Matrix<double, 6, 1> tip_wrench)
 
 {
 
-    Eigen::Matrix<double, 6, 1> db; 
+    Eigen::Matrix<double, 6, 1> d_yu; 
+    double lambda = 100.0; 
 
     solveJacobians(); 
 
     // std::cout << "yu_dot_w_tip: " << yu_dot_w_tip << "\n\n";
     // std::cout << "tip wrench: " << tip_wrench << "\n\n";
 
-    db = yu_dot_w_tip * tip_wrench; 
+    d_yu = yu_dot_w_tip * tip_wrench; 
+    d_yu += -lambda*B_yu.completeOrthogonalDecomposition().pseudoInverse()*(getBoundaryConditions() - (1/lambda)*tip_wrench*dt);
 
     // std::cout << "db * dt: " << db * dt << "\n\n";
     // std::cout << "db: " << db << "\n\n";
 
-    proximalStates.block<6, 1>(7, 0) += db * dt; 
+    proximalStates.block<6, 1>(7, 0) += d_yu * dt; 
     tipWrench += tip_wrench * dt ;
 
     integrateDistalStates();
@@ -198,15 +200,17 @@ void TetherUnit_Solver::updateTipWrench(Eigen::Matrix<double, 6, 1> twist)
 
 {
 
-    Eigen::Matrix<double, 6, 1> db; 
-    Eigen::Matrix<double, 6, 1> d_tipwrench; 
+    Eigen::Matrix<double, 6, 1> d_yu; 
+    Eigen::Matrix<double, 6, 1> d_tipwrench;
+    // double lambda = 1.0;  
 
     solveJacobians();
  
     d_tipwrench = w_tip_dot * twist; 
-    db = yu_dot_w_tip * d_tipwrench;
+    d_yu = yu_dot_w_tip * d_tipwrench;
+    // d_yu += -lambda*B_yu*(getBoundaryConditions() + (1/lambda)*d_tipwrench);
 
-    proximalStates.block<6, 1>(7, 0) += db * dt; 
+    proximalStates.block<6, 1>(7, 0) += d_yu * dt; 
 
     tipWrench += d_tipwrench * dt;
 

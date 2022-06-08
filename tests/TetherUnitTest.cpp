@@ -20,10 +20,10 @@ int main ()
     Eigen::Matrix<double, 6, 1> tipWrench; 
     Eigen::Matrix<double, 6, 1> twist;
 
-    twist << -0.1, 0.0, 0.1, 0.0, -0.8, 0.0;
+    // twist << -0.1, 0.0, 0.1, 0.0, -0.8, 0.0;
 
     // tipWrench << 0.02, 0.0, 0.0, 0.0, -0.01, 0.0;
-    // tipWrench << -0.05, 0.008, 0.05, 0.0, -0.01, 0.0; 
+    tipWrench << -0.05, 0.008, 0.15, 0.0, -0.009, 0.0; 
     
 
     
@@ -36,17 +36,53 @@ int main ()
 
     tetherobject.timer.tic();
 
-    for (int i = 0; i < 150; ++i) 
+    for (int i = 0; i < 200; ++i) 
     
     {
 
-        tetherobject.timer.tic();
+        // tetherobject.timer.tic();
 
-        tetherobject.updateTipWrench(twist);
+        // tetherobject.updateTipWrench(twist);
         // std::cout << "Boundary conditions" << tetherobject.getBoundaryConditions() << "\n\n";
-        // tetherobject.simulateStep(tipWrench);
+        tetherobject.simulateStep(tipWrench);
 
-        tetherobject.timer.toc();
+        // tetherobject.timer.toc();
+        
+
+    }
+
+    std::cout << "Boundary conditions" << tetherobject.getBoundaryConditions() << "\n\n";
+
+
+    for (int i = 0; i < 200; ++i) 
+    
+    {
+
+        // tetherobject.timer.tic();
+
+        // tetherobject.updateTipWrench(twist);
+        // std::cout << "Boundary conditions" << tetherobject.getBoundaryConditions() << "\n\n";
+        tetherobject.simulateStep(-tipWrench);
+
+        // tetherobject.timer.toc();
+        
+
+    }
+
+    std::cout << "Boundary conditions" << tetherobject.getBoundaryConditions() << "\n\n";
+
+
+    for (int i = 0; i < 200; ++i) 
+    
+    {
+
+        // tetherobject.timer.tic();
+
+        // tetherobject.updateTipWrench(twist);
+        // std::cout << "Boundary conditions" << tetherobject.getBoundaryConditions() << "\n\n";
+        tetherobject.simulateStep(tipWrench);
+
+        // tetherobject.timer.toc();
         
 
     }

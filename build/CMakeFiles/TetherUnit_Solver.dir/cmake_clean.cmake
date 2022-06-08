@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
-  "../lib/static/libTetherUnit_Solver.a"
-  "../lib/static/libTetherUnit_Solver.pdb"
   "CMakeFiles/TetherUnit_Solver.dir/src/tether_units/TetherUnit_Solver.cpp.o"
+  "../lib/static/libTetherUnit_Solver.pdb"
+  "../lib/static/libTetherUnit_Solver.a"
 )
 
 # Per-language clean rules from dependency scanning.
