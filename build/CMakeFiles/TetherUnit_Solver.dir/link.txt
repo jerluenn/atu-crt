@@ -1,2 +1,2 @@
-/usr/bin/ar qc ../lib/static/libTetherUnit_Solver.a  CMakeFiles/TetherUnit_Solver.dir/src/tether_units/TetherUnit_Solver.cpp.o
+/usr/bin/ar qc ../lib/static/libTetherUnit_Solver.a CMakeFiles/TetherUnit_Solver.dir/src/tether_units/TetherUnit_Solver.cpp.o
 /usr/bin/ranlib ../lib/static/libTetherUnit_Solver.a

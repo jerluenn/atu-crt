@@ -18,13 +18,13 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "../../acados/include/qpOASES_e"
   "../utils"
   "../lib"
-  "/usr/include/python3.7m"
+  "/usr/local/include/python3.8"
   "../src/tether_units/c_generated_code_tether_units/tetherunit_integrator"
   "../src/tether_units/c_generated_code_tether_units/tetherunit_integrator/tetherunit_integrator_model"
   "../src/tether_units/c_generated_code_tether_units/tetherunit_stepIntegrator"
   "../src/tether_units/c_generated_code_tether_units/tetherunit_stepIntegrator/tetherunit_stepIntegrator_model"
   "/usr/local/include/eigen3"
-  "/opt/ros/melodic/include"
+  "/opt/ros/kinetic/include"
   "/usr/include/eigen3"
   )
 

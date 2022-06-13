@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <stdlib.h>
+#include <fstream>
 #include <cmath>
 #include <Eigen/Dense>
 #include <Eigen/Core>
@@ -28,8 +29,13 @@ class TetherUnit_Solver
         TetherUnit_Solver(); 
         virtual ~TetherUnit_Solver(); 
         Eigen::MatrixXd getProximalStates();
+        Eigen::MatrixXd getFullStates(std::string fileName);
         Eigen::MatrixXd getFullStates();
-        Eigen::MatrixXd integrateDistalStates();
+        Eigen::MatrixXd getDistalStates();
+        Eigen::Matrix<double, 7, 1> getDistalPose();
+        Eigen::Matrix<double, 7, 6> getJacobianEta_wrt_tip(); 
+        void integrateDistalStates();
+        void integrateFullStates();
         void setInitialConditions(Eigen::MatrixXd initialConditions); 
 
         Eigen::Matrix<double, 6, 1> getBoundaryConditions();
@@ -51,8 +57,7 @@ class TetherUnit_Solver
         Eigen::MatrixXd distalStates;
         Eigen::MatrixXd proximalStates;
         Eigen::MatrixXd dummyStates;
-         
-        Eigen::MatrixXd integrateFullStates();
+        void saveData(std::string fileName, Eigen::MatrixXd matrix);
         Eigen::MatrixXd integrateWithIncrement(unsigned int index);
         Eigen::Matrix<double, 6, 1> tipWrench; // external tip wrench.
         double mass_distribution; 

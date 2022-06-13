@@ -1,2 +1,2 @@
-/usr/bin/ar qc ../lib/static/libTetherUnit_Interface.a  CMakeFiles/TetherUnit_Interface.dir/src/tether_units/TetherUnit_Interface.cpp.o
+/usr/bin/ar qc ../lib/static/libTetherUnit_Interface.a CMakeFiles/TetherUnit_Interface.dir/src/tether_units/TetherUnit_Interface.cpp.o
 /usr/bin/ranlib ../lib/static/libTetherUnit_Interface.a

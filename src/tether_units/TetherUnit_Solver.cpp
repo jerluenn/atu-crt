@@ -39,7 +39,7 @@ TetherUnit_Solver::TetherUnit_Solver(IntegrationInterface* integrator_, Integrat
     proximalStates << 0, 0, 0, 1, 0, 0, 0, mass_distribution * tether_length * g, 0, 0, 0, 0.183972, 0, 0, 0, 0.05, 0;
     distalStates.resize(numStates, 1); 
     distalStates.setZero();
-    fullStates.resize(numStates, num_integrationSteps);
+    fullStates.resize(num_integrationSteps + 1, numStates);
 
 }
 
@@ -50,23 +50,58 @@ TetherUnit_Solver::~TetherUnit_Solver()
 
 }
 
-Eigen::MatrixXd TetherUnit_Solver::integrateDistalStates() 
+void TetherUnit_Solver::integrateDistalStates() 
 
 {
 
     distalStates = integrator->integrate(proximalStates);
 
+}
+
+Eigen::Matrix<double, 7, 1> TetherUnit_Solver::getDistalPose() 
+
+{
+
+    return distalStates.block<7, 1>(0, 0);
+
+}
+
+Eigen::MatrixXd TetherUnit_Solver::getDistalStates() 
+
+{
+
     return distalStates;
 
 }
 
-Eigen::MatrixXd TetherUnit_Solver::integrateFullStates() 
+Eigen::Matrix<double, 7, 6> TetherUnit_Solver::getJacobianEta_wrt_tip() 
 
 {
 
-    
+    return J_w_tip_eta;
+
 }
 
+void TetherUnit_Solver::integrateFullStates() 
+
+{
+
+    // Meant for plotting entire arm.
+
+    Eigen::MatrixXd states_i(numStates, 1);
+    states_i = proximalStates;
+    fullStates.block<1, 17>(0, 0) = states_i.transpose();  
+
+    for (unsigned int i = 0; i < num_integrationSteps; ++i) 
+    
+    {
+
+        states_i = integratorStep->integrate(states_i);
+        fullStates.block<1, 17>(i + 1, 0) = states_i.transpose();
+
+    }
+
+}
 
 void TetherUnit_Solver::setTau(double tau)
 
@@ -154,6 +189,19 @@ Eigen::Matrix<double, 6, 1> TetherUnit_Solver::setTipWrench(Eigen::Matrix<double
 
 }
 
+void TetherUnit_Solver::saveData(std::string fileName, Eigen::MatrixXd matrix)
+{
+    //https://eigen.tuxfamily.org/dox/structEigen_1_1IOFormat.html
+    const static Eigen::IOFormat CSVFormat(Eigen::FullPrecision, Eigen::DontAlignCols, ", ", "\n");
+ 
+    std::ofstream file(fileName);
+    if (file.is_open())
+    {
+        file << matrix.format(CSVFormat);
+        file.close();
+    }
+}
+
 Eigen::Matrix<double, 6, 1> TetherUnit_Solver::getTipWrench() 
 
 {
@@ -168,14 +216,30 @@ Eigen::MatrixXd TetherUnit_Solver::getProximalStates() {
 
 }
 
-Eigen::MatrixXd TetherUnit_Solver::getFullStates() {} 
+Eigen::MatrixXd TetherUnit_Solver::getFullStates(std::string fileName) 
+
+{
+
+    saveData(fileName, fullStates);
+
+    return fullStates;
+
+} 
+
+Eigen::MatrixXd TetherUnit_Solver::getFullStates() 
+
+{
+
+    return fullStates;
+
+} 
 
 void TetherUnit_Solver::simulateStep(Eigen::Matrix<double, 6, 1> tip_wrench) 
 
 {
 
     Eigen::Matrix<double, 6, 1> d_yu; 
-    double lambda = 100.0; 
+    double lambda = 50.0; 
 
     solveJacobians(); 
 
@@ -183,14 +247,16 @@ void TetherUnit_Solver::simulateStep(Eigen::Matrix<double, 6, 1> tip_wrench)
     // std::cout << "tip wrench: " << tip_wrench << "\n\n";
 
     d_yu = yu_dot_w_tip * tip_wrench; 
-    d_yu += -lambda*B_yu.completeOrthogonalDecomposition().pseudoInverse()*(getBoundaryConditions() - (1/lambda)*tip_wrench*dt);
-
-    // std::cout << "db * dt: " << db * dt << "\n\n";
-    // std::cout << "db: " << db << "\n\n";
+    // d_yu = -lambda*B_yu.completeOrthogonalDecomposition().pseudoInverse()*(getBoundaryConditions() - (1/lambda)*tip_wrench*dt);
 
     proximalStates.block<6, 1>(7, 0) += d_yu * dt; 
     tipWrench += tip_wrench * dt ;
 
+    integrateDistalStates();
+
+    d_yu = -lambda*B_yu.completeOrthogonalDecomposition().pseudoInverse()*(getBoundaryConditions() - (1/lambda)*tip_wrench*dt);
+
+    proximalStates.block<6, 1>(7, 0) += d_yu * dt; 
     integrateDistalStates();
 
 
