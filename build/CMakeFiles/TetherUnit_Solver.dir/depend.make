@@ -36,7 +36,6 @@ CMakeFiles/TetherUnit_Solver.dir/src/tether_units/TetherUnit_Solver.cpp.o: ../..
 CMakeFiles/TetherUnit_Solver.dir/src/tether_units/TetherUnit_Solver.cpp.o: ../../acados/include/hpipm/include/hpipm_d_ocp_qp_sol.h
 CMakeFiles/TetherUnit_Solver.dir/src/tether_units/TetherUnit_Solver.cpp.o: ../utils/IntegratorInterface.hpp
 CMakeFiles/TetherUnit_Solver.dir/src/tether_units/TetherUnit_Solver.cpp.o: ../utils/MathUtils.hpp
-CMakeFiles/TetherUnit_Solver.dir/src/tether_units/TetherUnit_Solver.cpp.o: ../src/tether_units/IPOPTTetherUnit.hpp
 CMakeFiles/TetherUnit_Solver.dir/src/tether_units/TetherUnit_Solver.cpp.o: ../src/tether_units/TetherUnit_Solver.cpp
 CMakeFiles/TetherUnit_Solver.dir/src/tether_units/TetherUnit_Solver.cpp.o: ../src/tether_units/TetherUnit_Solver.hpp
 CMakeFiles/TetherUnit_Solver.dir/src/tether_units/TetherUnit_Solver.cpp.o: /opt/ros/kinetic/include/ifopt/bounds.h

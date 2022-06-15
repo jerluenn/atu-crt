@@ -50,9 +50,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <ifopt/variable_set.h>
 #include <ifopt/constraint_set.h>
 #include <ifopt/cost_term.h>
+#include <TetherUnit_Solver.hpp>
 
 namespace ifopt {
-using Eigen::Vector2d;
 
 
 class ExVariables : public VariableSet {
@@ -60,57 +60,85 @@ public:
   // Every variable set has a name, here "var_set1". this allows the constraints
   // and costs to define values and Jacobians specifically w.r.t this variable set.
   ExVariables() : ExVariables("var_set1") {};
-  ExVariables(const std::string& name) : VariableSet(2, name)
+  ExVariables(const std::string& name) : VariableSet(6, name)
   {
     // the initial values where the NLP starts iterating from
-    x0_ = 3.5;
-    x1_ = 1.5;
+    x0_ = 0.;
+    x1_ = 0.;
+    x2_ = 0.; 
+    x3_ = 0.; 
+    x4_ = 0.; 
+    x5_ = 0.; 
+
   }
 
   // Here is where you can transform the Eigen::Vector into whatever
   // internal representation of your variables you have (here two doubles, but
   // can also be complex classes such as splines, etc..
-  void SetVariables(const VectorXd& x) override
+  void SetVariables(const Eigen::VectorXd& x) override
   {
     x0_ = x(0);
     x1_ = x(1);
-  };
+    x2_ = x(2);
+    x3_ = x(3); 
+    x4_ = x(4); 
+    x5_ = x(5);
+
+    };
 
   // Here is the reverse transformation from the internal representation to
   // to the Eigen::Vector
-  VectorXd GetValues() const override
+  Eigen::VectorXd GetValues() const override
   {
-    return Vector2d(x0_, x1_);
+
+    return Eigen::Vector<double, 6>(x0_, x1_, x2_, x3_, x4_, x5_);
+
   };
 
   // Each variable has an upper and lower bound set here
   VecBound GetBounds() const override
   {
     VecBound bounds(GetRows());
-    bounds.at(0) = Bounds(-1.0, 1.0);
-    bounds.at(1) = NoBound;
+    bounds.at(0) = Bounds(-5.0, 5.0);
+    bounds.at(1) = Bounds(-5.0, 5.0);
+    bounds.at(2) = Bounds(-5.0, 5.0);
+    bounds.at(3) = Bounds(-5.0, 5.0);
+    bounds.at(4) = Bounds(-5.0, 5.0);
+    bounds.at(5) = Bounds(-5.0, 5.0);
     return bounds;
   }
 
 private:
-  double x0_, x1_;
+  double x0_, x1_, x2_, x3_, x4_, x5_;
+  
 };
 
 
 class ExConstraint : public ConstraintSet {
 public:
-  ExConstraint() : ExConstraint("constraint1") {}
+
+  ExConstraint(TetherUnit_Solver* TU) : ExConstraint("constraint1", TU) {}
 
   // This constraint set just contains 1 constraint, however generally
   // each set can contain multiple related constraints.
-  ExConstraint(const std::string& name) : ConstraintSet(1, name) {}
+  ExConstraint(const std::string& name, TetherUnit_Solver* TU) : ConstraintSet(6, name){
+
+      TU_Solver = TU; 
+
+  };
 
   // The constraint value minus the constant value "1", moved to bounds.
-  VectorXd GetValues() const override
+  Eigen::VectorXd GetValues() const override
   {
-    VectorXd g(GetRows());
-    Vector2d x = GetVariables()->GetComponent("var_set1")->GetValues();
-    g(0) = std::pow(x(0),2) + x(1);
+    Eigen::VectorXd g(GetRows());
+    Eigen::Vector<double, 6> x_ = GetVariables()->GetComponent("var_set1")->GetValues();
+    Eigen::Matrix<double, 6, 1> x;
+    x << x_.array();
+    TU_Solver->setInitialConditions(x);
+    TU_Solver->integrateFullStates();
+    unsigned int numSteps = TU_Solver->getNumIntegrationSteps();
+    g = TU_Solver->getFullStates().block<6, 1>(numSteps, 7);
+    
     return g;
   };
 
@@ -120,7 +148,12 @@ public:
   VecBound GetBounds() const override
   {
     VecBound b(GetRows());
-    b.at(0) = Bounds(1.0, 1.0);
+    b.at(0) = Bounds(-1e-6, 1e-6);
+    b.at(1) = Bounds(-1e-6, 1e-6);
+    b.at(2) = Bounds(-1e-6, 1e-6);
+    b.at(3) = Bounds(-1e-6, 1e-6);
+    b.at(4) = Bounds(-1e-6, 1e-6);
+    b.at(5) = Bounds(-1e-6, 1e-6);
     return b;
   }
 
@@ -136,35 +169,51 @@ public:
     // classes are added, this submatrix will always start at row 0 and column 0,
     // thereby being independent from the overall problem.
     if (var_set == "var_set1") {
-      Vector2d x = GetVariables()->GetComponent("var_set1")->GetValues();
+      Eigen::Vector<double, 6> x = GetVariables()->GetComponent("var_set1")->GetValues();
 
       jac_block.coeffRef(0, 0) = 2.0*x(0); // derivative of first constraint w.r.t x0
       jac_block.coeffRef(0, 1) = 1.0;      // derivative of first constraint w.r.t x1
     }
   }
+private:
+    TetherUnit_Solver* TU_Solver;
 };
 
 
 class ExCost: public CostTerm {
 public:
-  ExCost() : ExCost("cost_term1") {}
-  ExCost(const std::string& name) : CostTerm(name) {}
+
+  ExCost(const std::string& name, TetherUnit_Solver* TU) : CostTerm(name) 
+  
+  {
+    TU_Solver = TU; 
+
+  }
 
   double GetCost() const override
   {
-    Vector2d x = GetVariables()->GetComponent("var_set1")->GetValues();
-    return -std::pow(x(1)-2,2);
+    Eigen::Vector<double, 6> x_ = GetVariables()->GetComponent("var_set1")->GetValues();
+    Eigen::Matrix<double, 6, 1> x;
+    double cost;
+    x << x_.array();
+    TU_Solver->setInitialConditions(x);
+    TU_Solver->integrateFullStates();
+    unsigned int numSteps = TU_Solver->getNumIntegrationSteps();
+    // Getting the curvature
+    cost = TU_Solver->getFullStates()(numSteps, 16);
+    return cost;
   };
 
   void FillJacobianBlock (std::string var_set, Jacobian& jac) const override
   {
     if (var_set == "var_set1") {
-      Vector2d x = GetVariables()->GetComponent("var_set1")->GetValues();
-
+      Eigen::Vector<double, 6> x = GetVariables()->GetComponent("var_set1")->GetValues();
       jac.coeffRef(0, 0) = 0.0;             // derivative of cost w.r.t x0
       jac.coeffRef(0, 1) = -2.0*(x(1)-2.0); // derivative of cost w.r.t x1
     }
   }
+private:
+  TetherUnit_Solver* TU_Solver;
 };
 
 } // namespace opt

@@ -82,6 +82,14 @@ Eigen::Matrix<double, 7, 6> TetherUnit_Solver::getJacobianEta_wrt_tip()
 
 }
 
+unsigned int TetherUnit_Solver::getNumIntegrationSteps() 
+
+{
+
+    return num_integrationSteps;
+
+}
+
 void TetherUnit_Solver::integrateFullStates() 
 
 {
@@ -119,6 +127,14 @@ void TetherUnit_Solver::setInitialConditions(Eigen::MatrixXd initialConditions)
     assertm(proximalStates.cols() == initialConditions.cols(), "Initial Conditions must be the correct size!");
    
     proximalStates = initialConditions; 
+
+}
+
+void TetherUnit_Solver::setInitialConditions(Eigen::Matrix<double, 6, 1> initialConditions) 
+
+{
+   
+    proximalStates.block<6, 1>(7, 0) = initialConditions; 
 
 }
 

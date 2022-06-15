@@ -126,6 +126,7 @@ CMakeFiles/TetherUnit_Solver.dir/clean:
 
 # All Build rule for target.
 CMakeFiles/TetherUnitTest.dir/all: CMakeFiles/TetherUnit_Solver.dir/all
+CMakeFiles/TetherUnitTest.dir/all: CMakeFiles/TetherUnit_Interface.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/TetherUnitTest.dir/build.make CMakeFiles/TetherUnitTest.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/TetherUnitTest.dir/build.make CMakeFiles/TetherUnitTest.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/jerluen/atu-crt/build/CMakeFiles --progress-num=5,6 "Built target TetherUnitTest"
@@ -133,7 +134,7 @@ CMakeFiles/TetherUnitTest.dir/all: CMakeFiles/TetherUnit_Solver.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/TetherUnitTest.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/jerluen/atu-crt/build/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/jerluen/atu-crt/build/CMakeFiles 6
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/TetherUnitTest.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/jerluen/atu-crt/build/CMakeFiles 0
 .PHONY : CMakeFiles/TetherUnitTest.dir/rule

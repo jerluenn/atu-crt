@@ -7,6 +7,7 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
+set(CMAKE_BUILD_TYPE Debug)
 SET(CMAKE_CXX_FLAGS "-Wall -Wextra -fPIC -fopenmp  -DBOOST_LOG_DYN_LINK")
 SET(CMAKE_CXX_FLAGS_DEBUG "-g")
 # SET(CMAKE_CXX_FLAGS_RELEASE "-O3")
@@ -140,6 +141,7 @@ FOREACH(TEST_FILE ${TEST_FILES})
 	PUBLIC ifopt::ifopt_ipopt
 	${PYTHON_LIBRARIES} 
 	TetherUnit_Solver
+	TetherUnit_Interface
 	${acados_lib}/libacados.so
 	${LIBFILES}
 	${LIBS}

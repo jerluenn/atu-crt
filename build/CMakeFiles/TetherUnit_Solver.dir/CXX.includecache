@@ -292,14 +292,6 @@ vector
 chrono
 -
 
-/home/jerluen/atu-crt/src/tether_units/IPOPTTetherUnit.hpp
-ifopt/variable_set.h
--
-ifopt/constraint_set.h
--
-ifopt/cost_term.h
--
-
 /home/jerluen/atu-crt/src/tether_units/TetherUnit_Solver.cpp
 TetherUnit_Solver.hpp
 /home/jerluen/atu-crt/src/tether_units/TetherUnit_Solver.hpp
@@ -333,8 +325,6 @@ map
 -
 ifopt/ipopt_solver.h
 -
-IPOPTTetherUnit.hpp
-/home/jerluen/atu-crt/src/tether_units/IPOPTTetherUnit.hpp
 
 /opt/ros/kinetic/include/ifopt/bounds.h
 

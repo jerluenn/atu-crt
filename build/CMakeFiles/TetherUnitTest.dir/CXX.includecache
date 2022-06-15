@@ -257,6 +257,14 @@ ifopt/constraint_set.h
 -
 ifopt/cost_term.h
 -
+TetherUnit_Solver.hpp
+-
+
+../src/tether_units/TetherUnit_Interface.hpp
+TetherUnit_Solver.hpp
+-
+IPOPTTetherUnit.hpp
+../src/tether_units/IPOPTTetherUnit.hpp
 
 ../src/tether_units/TetherUnit_Solver.hpp
 iostream
@@ -287,8 +295,6 @@ map
 -
 ifopt/ipopt_solver.h
 -
-IPOPTTetherUnit.hpp
-../src/tether_units/IPOPTTetherUnit.hpp
 
 ../src/tether_units/c_generated_code_tether_units/tetherunit_integrator/acados_sim_solver_tetherunit_integrator.h
 acados_c/sim_interface.h
@@ -348,6 +354,8 @@ chrono
 TetherUnit_Solver.hpp
 -
 IntegratorInterface.hpp
+-
+TetherUnit_Interface.hpp
 -
 acados_sim_solver_tetherunit_integrator.h
 /home/jerluen/atu-crt/tests/acados_sim_solver_tetherunit_integrator.h

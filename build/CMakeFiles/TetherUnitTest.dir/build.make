@@ -100,6 +100,7 @@ TetherUnitTest_EXTERNAL_OBJECTS =
 ../bin/TetherUnitTest: CMakeFiles/TetherUnitTest.dir/build.make
 ../bin/TetherUnitTest: /usr/local/lib/libpython3.8.a
 ../bin/TetherUnitTest: ../lib/static/libTetherUnit_Solver.a
+../bin/TetherUnitTest: ../lib/static/libTetherUnit_Interface.a
 ../bin/TetherUnitTest: ../../acados/lib/libacados.so
 ../bin/TetherUnitTest: ../lib/shared/libacados_sim_solver_tetherunit_integrator.so
 ../bin/TetherUnitTest: ../lib/shared/libacados_sim_solver_tetherunit_stepIntegrator.so

@@ -37,7 +37,6 @@ CMakeFiles/TetherUnit_Solver.dir/src/tether_units/TetherUnit_Solver.cpp.o
  ../../acados/include/hpipm/include/hpipm_d_ocp_qp_sol.h
  ../utils/IntegratorInterface.hpp
  ../utils/MathUtils.hpp
- /home/jerluen/atu-crt/src/tether_units/IPOPTTetherUnit.hpp
  /home/jerluen/atu-crt/src/tether_units/TetherUnit_Solver.cpp
  /home/jerluen/atu-crt/src/tether_units/TetherUnit_Solver.hpp
  /opt/ros/kinetic/include/ifopt/bounds.h

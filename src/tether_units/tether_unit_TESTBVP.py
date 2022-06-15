@@ -15,6 +15,9 @@ import time
 import tetherunit, rod_parameterbuilder
 from matplotlib import pyplot as plt
 
+import gurobipy as gp
+from gurobipy import GRB
+
 class TetherUnitBoundarySolver: 
 
     def __init__(self, robot_dict, initConditions, distalPose): 
@@ -204,8 +207,8 @@ if __name__ == "__main__":
     distalPose = np.array([-0.6, 0, 0.485, 1, 0, 0, 0])
     testClass = TetherUnitBoundarySolver(robot_dict, initConditions, distalPose)
     # testClass.solveBVP(True, True)
-    initConditions = np.array([0, 0, 0, 1, 0, 0, 0, 0.1654451615, -0.02924930271, 0.02162994407, 0.01970838987,
-    0.005677427981, 0.0001544019308, 5, 0, 0.05, 0])
+    initConditions = np.array([0, 0, 0, 1, 0, 0, 0, 0.1269060585, 0, 0.1487762544, 0.0,
+   0.003955816378, 0.0, 5, 0, 0.05, 0])
     test_Function(testClass, initConditions)
     test_Function2(testClass, testClass.initConditions)
     eig = getEigenvalues(testClass, testClass.initConditions)

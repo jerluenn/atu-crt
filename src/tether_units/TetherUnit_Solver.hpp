@@ -15,7 +15,6 @@
 #include <chrono>
 #include <map>
 #include <ifopt/ipopt_solver.h>
-#include "IPOPTTetherUnit.hpp"
 
 #define assertm(exp, msg) assert(((void)msg, exp))
 
@@ -32,11 +31,13 @@ class TetherUnit_Solver
         Eigen::MatrixXd getFullStates(std::string fileName);
         Eigen::MatrixXd getFullStates();
         Eigen::MatrixXd getDistalStates();
+        unsigned int getNumIntegrationSteps();
         Eigen::Matrix<double, 7, 1> getDistalPose();
         Eigen::Matrix<double, 7, 6> getJacobianEta_wrt_tip(); 
         void integrateDistalStates();
         void integrateFullStates();
         void setInitialConditions(Eigen::MatrixXd initialConditions); 
+        void setInitialConditions(Eigen::Matrix<double, 6, 1> initialConditions);
 
         Eigen::Matrix<double, 6, 1> getBoundaryConditions();
         Eigen::Matrix<double, 6, 1> getBoundaryConditions_IncreaseWrenchTip(unsigned int index);
