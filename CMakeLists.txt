@@ -141,7 +141,6 @@ FOREACH(TEST_FILE ${TEST_FILES})
 	PUBLIC ifopt::ifopt_ipopt
 	${PYTHON_LIBRARIES} 
 	TetherUnit_Solver
-	TetherUnit_Interface
 	${acados_lib}/libacados.so
 	${LIBFILES}
 	${LIBS}

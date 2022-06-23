@@ -75,17 +75,6 @@ CMAKE_BINARY_DIR = /home/jerluen/atu-crt/build
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/usr/local/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
-.PHONY : edit_cache
-
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
-
-.PHONY : edit_cache/fast
-
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
@@ -96,6 +85,17 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 
 .PHONY : rebuild_cache/fast
+
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
+	/usr/local/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+.PHONY : edit_cache
+
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
+
+.PHONY : edit_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -128,6 +128,19 @@ preinstall/fast:
 depend:
 	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
+
+#=============================================================================
+# Target rules for targets named MathUtils
+
+# Build rule for target.
+MathUtils: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 MathUtils
+.PHONY : MathUtils
+
+# fast build rule for target.
+MathUtils/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MathUtils.dir/build.make CMakeFiles/MathUtils.dir/build
+.PHONY : MathUtils/fast
 
 #=============================================================================
 # Target rules for targets named TetherUnit_Solver
@@ -167,59 +180,6 @@ IntegratorInterface: cmake_check_build_system
 IntegratorInterface/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/IntegratorInterface.dir/build.make CMakeFiles/IntegratorInterface.dir/build
 .PHONY : IntegratorInterface/fast
-
-#=============================================================================
-# Target rules for targets named MathUtils
-
-# Build rule for target.
-MathUtils: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 MathUtils
-.PHONY : MathUtils
-
-# fast build rule for target.
-MathUtils/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MathUtils.dir/build.make CMakeFiles/MathUtils.dir/build
-.PHONY : MathUtils/fast
-
-#=============================================================================
-# Target rules for targets named TetherUnit_Interface
-
-# Build rule for target.
-TetherUnit_Interface: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 TetherUnit_Interface
-.PHONY : TetherUnit_Interface
-
-# fast build rule for target.
-TetherUnit_Interface/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TetherUnit_Interface.dir/build.make CMakeFiles/TetherUnit_Interface.dir/build
-.PHONY : TetherUnit_Interface/fast
-
-src/tether_units/TetherUnit_Interface.o: src/tether_units/TetherUnit_Interface.cpp.o
-
-.PHONY : src/tether_units/TetherUnit_Interface.o
-
-# target to build an object file
-src/tether_units/TetherUnit_Interface.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TetherUnit_Interface.dir/build.make CMakeFiles/TetherUnit_Interface.dir/src/tether_units/TetherUnit_Interface.cpp.o
-.PHONY : src/tether_units/TetherUnit_Interface.cpp.o
-
-src/tether_units/TetherUnit_Interface.i: src/tether_units/TetherUnit_Interface.cpp.i
-
-.PHONY : src/tether_units/TetherUnit_Interface.i
-
-# target to preprocess a source file
-src/tether_units/TetherUnit_Interface.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TetherUnit_Interface.dir/build.make CMakeFiles/TetherUnit_Interface.dir/src/tether_units/TetherUnit_Interface.cpp.i
-.PHONY : src/tether_units/TetherUnit_Interface.cpp.i
-
-src/tether_units/TetherUnit_Interface.s: src/tether_units/TetherUnit_Interface.cpp.s
-
-.PHONY : src/tether_units/TetherUnit_Interface.s
-
-# target to generate assembly for a file
-src/tether_units/TetherUnit_Interface.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TetherUnit_Interface.dir/build.make CMakeFiles/TetherUnit_Interface.dir/src/tether_units/TetherUnit_Interface.cpp.s
-.PHONY : src/tether_units/TetherUnit_Interface.cpp.s
 
 src/tether_units/TetherUnit_Solver.o: src/tether_units/TetherUnit_Solver.cpp.o
 
@@ -340,11 +300,7 @@ help:
 	@echo "... IntegratorInterface"
 	@echo "... MathUtils"
 	@echo "... TetherUnitTest"
-	@echo "... TetherUnit_Interface"
 	@echo "... TetherUnit_Solver"
-	@echo "... src/tether_units/TetherUnit_Interface.o"
-	@echo "... src/tether_units/TetherUnit_Interface.i"
-	@echo "... src/tether_units/TetherUnit_Interface.s"
 	@echo "... src/tether_units/TetherUnit_Solver.o"
 	@echo "... src/tether_units/TetherUnit_Solver.i"
 	@echo "... src/tether_units/TetherUnit_Solver.s"

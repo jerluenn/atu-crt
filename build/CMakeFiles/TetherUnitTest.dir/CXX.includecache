@@ -250,22 +250,6 @@ blasfeo_common.h
 hpipm_d_ocp_qp_dim.h
 ../../acados/include/hpipm/include/hpipm_d_ocp_qp_dim.h
 
-../src/tether_units/IPOPTTetherUnit.hpp
-ifopt/variable_set.h
--
-ifopt/constraint_set.h
--
-ifopt/cost_term.h
--
-TetherUnit_Solver.hpp
--
-
-../src/tether_units/TetherUnit_Interface.hpp
-TetherUnit_Solver.hpp
--
-IPOPTTetherUnit.hpp
-../src/tether_units/IPOPTTetherUnit.hpp
-
 ../src/tether_units/TetherUnit_Solver.hpp
 iostream
 -
@@ -354,8 +338,6 @@ chrono
 TetherUnit_Solver.hpp
 -
 IntegratorInterface.hpp
--
-TetherUnit_Interface.hpp
 -
 acados_sim_solver_tetherunit_integrator.h
 /home/jerluen/atu-crt/tests/acados_sim_solver_tetherunit_integrator.h

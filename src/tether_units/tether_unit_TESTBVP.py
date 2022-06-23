@@ -207,8 +207,8 @@ if __name__ == "__main__":
     distalPose = np.array([-0.6, 0, 0.485, 1, 0, 0, 0])
     testClass = TetherUnitBoundarySolver(robot_dict, initConditions, distalPose)
     # testClass.solveBVP(True, True)
-    initConditions = np.array([0, 0, 0, 1, 0, 0, 0, 0.1269060585, 0, 0.1487762544, 0.0,
-   0.003955816378, 0.0, 5, 0, 0.05, 0])
+    initConditions = np.array([0, 0, 0, 1, 0, 0, 0, -0.06701068308, 0, 0.1471605353, 0.0,
+   -0.05397767432, 0.0, 5, 0, 0.05, 0])
     test_Function(testClass, initConditions)
     test_Function2(testClass, testClass.initConditions)
     eig = getEigenvalues(testClass, testClass.initConditions)

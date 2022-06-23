@@ -34,8 +34,6 @@ CMakeFiles/TetherUnitTest.dir/tests/TetherUnitTest.cpp.o: ../../acados/include/h
 CMakeFiles/TetherUnitTest.dir/tests/TetherUnitTest.cpp.o: ../../acados/include/hpipm/include/hpipm_d_ocp_qp_dim.h
 CMakeFiles/TetherUnitTest.dir/tests/TetherUnitTest.cpp.o: ../../acados/include/hpipm/include/hpipm_d_ocp_qp_res.h
 CMakeFiles/TetherUnitTest.dir/tests/TetherUnitTest.cpp.o: ../../acados/include/hpipm/include/hpipm_d_ocp_qp_sol.h
-CMakeFiles/TetherUnitTest.dir/tests/TetherUnitTest.cpp.o: ../src/tether_units/IPOPTTetherUnit.hpp
-CMakeFiles/TetherUnitTest.dir/tests/TetherUnitTest.cpp.o: ../src/tether_units/TetherUnit_Interface.hpp
 CMakeFiles/TetherUnitTest.dir/tests/TetherUnitTest.cpp.o: ../src/tether_units/TetherUnit_Solver.hpp
 CMakeFiles/TetherUnitTest.dir/tests/TetherUnitTest.cpp.o: ../src/tether_units/c_generated_code_tether_units/tetherunit_integrator/acados_sim_solver_tetherunit_integrator.h
 CMakeFiles/TetherUnitTest.dir/tests/TetherUnitTest.cpp.o: ../src/tether_units/c_generated_code_tether_units/tetherunit_stepIntegrator/acados_sim_solver_tetherunit_stepIntegrator.h

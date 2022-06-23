@@ -23,8 +23,7 @@ class TetherUnit_Solver
 {
 
     public: 
-
-        TetherUnit_Solver(IntegrationInterface* integrator_, IntegrationInterface* integratorStep_, double mass_distribution_, double tether_length_, unsigned int num_integrationSteps_);
+        TetherUnit_Solver(IntegrationInterface* integrator_, IntegrationInterface* integratorStep_, double mass_distribution_, double tether_length_, unsigned int num_integrationSteps_, double lambdaLyapunov_, double lambdaDLS_, double Kp_, Eigen::MatrixXd initialSolution);
         TetherUnit_Solver(); 
         virtual ~TetherUnit_Solver(); 
         Eigen::MatrixXd getProximalStates();
@@ -38,16 +37,18 @@ class TetherUnit_Solver
         void integrateFullStates();
         void setInitialConditions(Eigen::MatrixXd initialConditions); 
         void setInitialConditions(Eigen::Matrix<double, 6, 1> initialConditions);
+        Eigen::Matrix<double, 6, 1> getTipWrench();
 
         Eigen::Matrix<double, 6, 1> getBoundaryConditions();
         Eigen::Matrix<double, 6, 1> getBoundaryConditions_IncreaseWrenchTip(unsigned int index);
         Eigen::Matrix<double, 6, 1> getBoundaryConditions(Eigen::MatrixXd distalConditions_);
-        Eigen::Matrix<double, 6, 1> getTipWrench(); 
         Eigen::Matrix<double, 6, 1> setTipWrench(Eigen::Matrix<double, 6, 1> p_FM);
         void updateTipWrench(Eigen::Matrix<double, 6, 1> twist);
         void simulateStep(Eigen::Matrix<double, 6, 1> tip_wrench);
         void setTau(double tau); 
         void solveJacobians(); 
+        void solveReactionForcesStep(Eigen::MatrixXd poseDesired);
+        Eigen::Matrix<double, 7, 1> getPoseError();
 
         MathUtils::Timer timer;
 
@@ -58,6 +59,9 @@ class TetherUnit_Solver
         Eigen::MatrixXd distalStates;
         Eigen::MatrixXd proximalStates;
         Eigen::MatrixXd dummyStates;
+        Eigen::Matrix<double, 7, 1> poseError;
+        Eigen::Matrix<double, 7, 7> I_7x7; 
+        Eigen::MatrixXd J_test;
         void saveData(std::string fileName, Eigen::MatrixXd matrix);
         Eigen::MatrixXd integrateWithIncrement(unsigned int index);
         Eigen::Matrix<double, 6, 1> tipWrench; // external tip wrench.
@@ -71,6 +75,9 @@ class TetherUnit_Solver
         constexpr static double EPS = 1e-10;
         IntegrationInterface* integrator;
         IntegrationInterface* integratorStep;
+        double lambdaLyapunov;
+        double lambdaDLS;
+        double Kp;
         double dt = 0.01;
 
 };

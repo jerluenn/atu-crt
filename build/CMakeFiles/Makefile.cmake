@@ -64,9 +64,8 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
+  "CMakeFiles/MathUtils.dir/DependInfo.cmake"
   "CMakeFiles/TetherUnit_Solver.dir/DependInfo.cmake"
   "CMakeFiles/TetherUnitTest.dir/DependInfo.cmake"
   "CMakeFiles/IntegratorInterface.dir/DependInfo.cmake"
-  "CMakeFiles/MathUtils.dir/DependInfo.cmake"
-  "CMakeFiles/TetherUnit_Interface.dir/DependInfo.cmake"
   )

@@ -294,9 +294,6 @@ PYTHON_LIBRARY:FILEPATH=/usr/local/lib/libpython3.8.a
 PYTHON_LIBRARY_DEBUG:FILEPATH=PYTHON_LIBRARY_DEBUG-NOTFOUND
 
 //Dependencies for the target
-TetherUnit_Interface_LIB_DEPENDS:STATIC=general;ifopt::ifopt_ipopt;general;/usr/local/lib/libpython3.8.a;general;/home/jerluen/atu-crt/../acados/lib/libacados.so;general;/home/jerluen/atu-crt/lib/shared/libacados_sim_solver_tetherunit_integrator.so;general;/home/jerluen/atu-crt/lib/shared/libacados_sim_solver_tetherunit_stepIntegrator.so;general;/home/jerluen/atu-crt/lib/static/libIPOPTTetherUnit.a;general;/home/jerluen/atu-crt/lib/static/libIntegratorInterface.a;general;/home/jerluen/atu-crt/lib/static/libMathUtils.a;general;/home/jerluen/atu-crt/lib/static/libTetherUnit_Interface.a;general;/home/jerluen/atu-crt/lib/static/libTetherUnit_Solver.a;
-
-//Dependencies for the target
 TetherUnit_Solver_LIB_DEPENDS:STATIC=general;ifopt::ifopt_ipopt;general;/usr/local/lib/libpython3.8.a;general;/home/jerluen/atu-crt/../acados/lib/libacados.so;general;/home/jerluen/atu-crt/lib/shared/libacados_sim_solver_tetherunit_integrator.so;general;/home/jerluen/atu-crt/lib/shared/libacados_sim_solver_tetherunit_stepIntegrator.so;general;/home/jerluen/atu-crt/lib/static/libIPOPTTetherUnit.a;general;/home/jerluen/atu-crt/lib/static/libIntegratorInterface.a;general;/home/jerluen/atu-crt/lib/static/libMathUtils.a;general;/home/jerluen/atu-crt/lib/static/libTetherUnit_Interface.a;general;/home/jerluen/atu-crt/lib/static/libTetherUnit_Solver.a;
 
 //Value Computed by CMake
