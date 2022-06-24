@@ -16,6 +16,10 @@ _deps
 # Prerequisites
 *.d
 
+# C generated files
+*.c
+*.h
+
 # Object files
 *.o
 *.ko
