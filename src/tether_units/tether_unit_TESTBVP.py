@@ -15,8 +15,6 @@ import time
 import tetherunit, rod_parameterbuilder
 from matplotlib import pyplot as plt
 
-import gurobipy as gp
-from gurobipy import GRB
 
 class TetherUnitBoundarySolver: 
 
