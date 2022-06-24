@@ -49,8 +49,6 @@ TetherUnit_Solver::TetherUnit_Solver(IntegrationInterface* integrator_, Integrat
     lambdaDLS = lambdaDLS_;
     integrateDistalStates();
     solveJacobians();
-    J_test.resize(7, 6);
-    J_test = getJacobianEta_wrt_tip();
     poseError << 1, 1, 1, 1, 1, 1, 1;
 
 }
@@ -211,8 +209,8 @@ void TetherUnit_Solver::solveReactionForcesStep(Eigen::MatrixXd poseDesired)
     assertm(poseDesired.cols() == 1, "poseDesired must have 1 col.");
 
     poseError = poseDesired - getDistalPose();
-    tipWrench = Kp * J_test.transpose() * (J_test * J_test.transpose() + pow(lambdaDLS, 2)*I_7x7).inverse() * poseError;
-    simulateStep(tipWrench);
+    tipWrenchInput = Kp * J_w_tip_eta.transpose() * (J_w_tip_eta * J_w_tip_eta.transpose() + pow(lambdaDLS, 2)*I_7x7).inverse() * poseError;
+    simulateStep(tipWrenchInput);
     std::cout << poseError.transpose() << "\n\n";
     std::cout << tipWrench.transpose() << "\n\n";
 

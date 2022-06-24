@@ -64,7 +64,7 @@ class TetherUnit_Solver
         Eigen::MatrixXd J_test;
         void saveData(std::string fileName, Eigen::MatrixXd matrix);
         Eigen::MatrixXd integrateWithIncrement(unsigned int index);
-        Eigen::Matrix<double, 6, 1> tipWrench; // external tip wrench.
+        Eigen::Matrix<double, 6, 1> tipWrench, tipWrenchInput; // external tip wrench.
         double mass_distribution; 
         double tether_length;
         const unsigned int numStates = 17; 
