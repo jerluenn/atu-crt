@@ -211,8 +211,6 @@ void TetherUnit_Solver::solveReactionForcesStep(Eigen::MatrixXd poseDesired)
     poseError = poseDesired - getDistalPose();
     tipWrenchInput = Kp * J_w_tip_eta.transpose() * (J_w_tip_eta * J_w_tip_eta.transpose() + pow(lambdaDLS, 2)*I_7x7).inverse() * poseError;
     simulateStep(tipWrenchInput);
-    std::cout << poseError.transpose() << "\n\n";
-    std::cout << tipWrench.transpose() << "\n\n";
 
 }
 
