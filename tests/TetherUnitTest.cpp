@@ -24,14 +24,14 @@ int main ()
     Here, we set some inputs to test the Jacobians solved by TetherUnit_Solver. 
      */
     Eigen::Matrix<double, 7, 1> poseDesired;
-    poseDesired << -1.4, 0.0, 1.6, 1, 0, 0, 0 ;
+    poseDesired << -1.0, 0.5, 1.0, 1, 0, 0, 0 ;
     double mass_distribution = 0.035; 
     double tether_length = 2.3;
     double g = 9.81;
     Eigen::MatrixXd proximalStates(17, 1);
     proximalStates << 0, 0, 0, 1, 0, 0, 0, mass_distribution * tether_length * g, 0, 0, 0, 0.183972, 0, 0, 0, 0.05, 0;
 
-    TetherUnit_Solver TSolver(&i1, &i2, 0.035, 2.3, 50, 50, 1, 2.5, proximalStates); 
+    TetherUnit_Solver TSolver(&i1, &i2, 0.035, 2.3, 50, 50, 1, 1.0, proximalStates); 
 
     std::cout.precision(10);
 
