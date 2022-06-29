@@ -7,20 +7,20 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
-set(CMAKE_BUILD_TYPE Debug)
+# set(CMAKE_BUILD_TYPE Debug)
 SET(CMAKE_CXX_FLAGS "-Wall -Wextra -fPIC -fopenmp  -DBOOST_LOG_DYN_LINK")
 SET(CMAKE_CXX_FLAGS_DEBUG "-g")
-# SET(CMAKE_CXX_FLAGS_RELEASE "-O3")
+SET(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 SET( EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/bin )
-SET( LIB_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib )
+SET( LIB_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib/shared )
 SET( SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src )
 SET( TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tests )
 SET( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib/static)
 SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${LIB_PATH} ) 
-SET( acados_include "${CMAKE_CURRENT_SOURCE_DIR}/../acados/include" )
-SET( acados_lib "${CMAKE_CURRENT_SOURCE_DIR}/../acados/lib")
-SET( c_functions "${SOURCE_DIR}/tether_units")
+SET( acados_include "~/acados/include" )
+SET( acados_lib "~/acados/lib")
+SET( c_functions "${SOURCE_DIR}/tether_units/c_generated_code_tether_units")
 
 MACRO(SUBDIRLIST result curdir)
   FILE(GLOB children RELATIVE ${curdir} ${curdir}/*)
@@ -42,12 +42,11 @@ if(NOT EIGEN3_FOUND)
   set(EIGEN3_LIBRARIES ${EIGEN_LIBRARIES})
 endif()
 find_package(PythonLibs REQUIRED)
-find_package(ifopt)
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system log_setup log REQUIRED)
 
-include_directories(
+INCLUDE_DIRECTORIES(
 
 	${SOURCE_DIR}/tether_units
 	${acados_include}
@@ -65,89 +64,61 @@ include_directories(
 FILE( GLOB SOURCES ${SOURCE_DIR}/tether_units/*.cpp )
 FILE( GLOB UTIL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp )
 FILE( GLOB TEST_FILES ${TEST_DIR}/*.cpp)
-SUBDIRLIST(SUBDIRS ${c_functions})
+SUBDIRLIST(C_FUNC_TETHER_LIST ${c_functions})
 
-FOREACH(SUBDIR ${SUBDIRS})
+FOREACH(SUBDIR ${C_FUNC_TETHER_LIST})
 
 	SUBDIRLIST(SUBSUBDIRS ${c_functions}/${SUBDIR})
 	
 	FOREACH(SUBSUBDIR ${SUBSUBDIRS})
 
-		SUBDIRLIST(SUBSUBSUBDIRS ${c_functions}/${SUBDIR}/${SUBSUBDIR})
-	
-		include_directories(${c_functions}/${SUBDIR}/${SUBSUBDIR}/${SUBSUBSUBDIR})
-		message(STATUS ${c_functions}/${SUBDIR}/${SUBSUBDIR}/${SUBSUBSUBDIR})		
-
-		FOREACH(SUBSUBSUBDIR ${SUBSUBSUBDIRS})
-
-			include_directories(${c_functions}/${SUBDIR}/${SUBSUBDIR}/${SUBSUBSUBDIR})
-			
-
-		ENDFOREACH()
+		INCLUDE_DIRECTORIES(${c_functions}/${SUBDIR}/${SUBSUBDIR})
+		INCLUDE_DIRECTORIES(${c_functions}/${SUBDIR})
 
 	ENDFOREACH()
 
 ENDFOREACH(SUBDIR ${c_functions})
 
-# Compiling executables
+ADD_LIBRARY(MathUtils ${CMAKE_CURRENT_SOURCE_DIR}/utils/MathUtils.cpp)
+TARGET_LINK_LIBRARIES(MathUtils 
+PRIVATE Eigen3::Eigen 
+${PYTHON_LIBRARIES} 
+${acados_lib}/libacados.so)
 
-FOREACH(UTIL_SRC ${UTIL_SOURCES})
+ADD_LIBRARY(IntegratorInterface ${CMAKE_CURRENT_SOURCE_DIR}/utils/IntegratorInterface.cpp)
+TARGET_LINK_LIBRARIES(IntegratorInterface 
+PUBLIC MathUtils
+PRIVATE Eigen3::Eigen 
+${PYTHON_LIBRARIES} 
+${acados_lib}/libacados.so)
 
-	FILE( GLOB LIBFILES ${LIB_PATH}/shared/*.so)
-	FILE( GLOB LIBS ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/*.a )
-	GET_FILENAME_COMPONENT( EXEC_NAME ${UTIL_SRC} NAME_WE )
-	ADD_LIBRARY(${EXEC_NAME} ${UTIL_SRC})	
-	TARGET_LINK_LIBRARIES(	${EXEC_NAME} 
-	PRIVATE Eigen3::Eigen 
-	PUBLIC ifopt::ifopt_ipopt
-	${PYTHON_LIBRARIES} 
-	${acados_lib}/libacados.so
-	${LIBFILES}
-	${LIBS}
-	
-
-)
-
-ENDFOREACH(UTIL_SRC ${UTIL_SOURCES})
-
-FOREACH(SRC ${SOURCES})
-
-	FILE( GLOB LIBFILES ${LIB_PATH}/shared/*.so)
-	GET_FILENAME_COMPONENT( EXEC_NAME ${SRC} NAME_WE )
-	FILE( GLOB LIBS ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/*.a )	
-	ADD_LIBRARY(${EXEC_NAME} ${SRC})	
-	TARGET_LINK_LIBRARIES(${EXEC_NAME} 
-	PRIVATE Eigen3::Eigen 
-	PUBLIC ifopt::ifopt_ipopt
-	${PYTHON_LIBRARIES} 
-	${acados_lib}/libacados.so
-	${LIBFILES}
-	${LIBS}
-	
-
-)
-
-ENDFOREACH(SRC ${SOURCES})
-
+ADD_LIBRARY(TetherUnit_Solver ${CMAKE_CURRENT_SOURCE_DIR}/src/tether_units/TetherUnit_Solver.cpp)
+TARGET_LINK_LIBRARIES(TetherUnit_Solver
+PUBLIC IntegratorInterface 
+PUBLIC MathUtils
+PRIVATE Eigen3::Eigen 
+${PYTHON_LIBRARIES} 
+${acados_lib}/libacados.so)
 
 FOREACH(TEST_FILE ${TEST_FILES})
 
-	FILE( GLOB LIBFILES ${LIB_PATH}/shared/*.so)
-	FILE( GLOB LIBS ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/*.a )
+  FILE( GLOB LIBFILES ${LIB_PATH}/*.so)
 	GET_FILENAME_COMPONENT( EXEC_NAME ${TEST_FILE} NAME_WE)
 	ADD_EXECUTABLE(${EXEC_NAME} ${TEST_FILE})
 	TARGET_LINK_LIBRARIES(${EXEC_NAME} 
-	PRIVATE Eigen3::Eigen 
-	PUBLIC ifopt::ifopt_ipopt
-	${PYTHON_LIBRARIES} 
-	TetherUnit_Solver
-	${acados_lib}/libacados.so
-	${LIBFILES}
-	${LIBS}
-	Boost::log 
-	Boost::log_setup
-	
-	
+  PUBLIC TetherUnit_Solver
+  PUBLIC MathUtils
+  PUBLIC IntegratorInterface 
+  PRIVATE Eigen3::Eigen 
+  ${PYTHON_LIBRARIES} 
+  ${acados_lib}/libacados.so
+  ${LIBFILES}
 )
 
 ENDFOREACH(TEST_FILE ${TEST_FILES})
+
+INSTALL(TARGETS TetherUnitTest MathUtils TetherUnit_Solver IntegratorInterface
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)

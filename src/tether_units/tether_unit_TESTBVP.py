@@ -31,7 +31,7 @@ class TetherUnitBoundarySolver:
 
         builder = rod_parameterbuilder.Rod_Parameter_Builder()
         builder.createHollowRod(robot_dict)
-        self.tetherObject = tetherunit.TetherUnit(builder)
+        self.tetherObject = tetherunit.TetherUnit(builder, sys.argv[1])
 
     def set_and_integrate(self): 
 

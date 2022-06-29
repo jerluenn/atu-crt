@@ -229,7 +229,7 @@ Eigen::Matrix<double, 6, 1> TetherUnit_Solver::getBoundaryConditions()
 
 }
 
-Eigen::Matrix<double, 6, 1> TetherUnit_Solver::setTipWrench(Eigen::Matrix<double, 6, 1> p_FM) 
+void TetherUnit_Solver::setTipWrench(Eigen::Matrix<double, 6, 1> p_FM) 
 
 {
 

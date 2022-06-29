@@ -42,7 +42,7 @@ class TetherUnit_Solver
         Eigen::Matrix<double, 6, 1> getBoundaryConditions();
         Eigen::Matrix<double, 6, 1> getBoundaryConditions_IncreaseWrenchTip(unsigned int index);
         Eigen::Matrix<double, 6, 1> getBoundaryConditions(Eigen::MatrixXd distalConditions_);
-        Eigen::Matrix<double, 6, 1> setTipWrench(Eigen::Matrix<double, 6, 1> p_FM);
+        void setTipWrench(Eigen::Matrix<double, 6, 1> p_FM);
         void updateTipWrench(Eigen::Matrix<double, 6, 1> twist);
         void simulateStep(Eigen::Matrix<double, 6, 1> tip_wrench);
         void setTau(double tau); 
