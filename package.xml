@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+
+<package format="3">
+  <name>atu-crt</name>
+  <version>1.0.0</version>
+  <description>
+  Application of Cosserat rod theory to cable/tendon driven tethered units.
+  </description>
+  
+  <author>Chien Jer Luen</author>
+  <maintainer email="jerluen0@gmail.com">Chien Jer Luen</maintainer>
+  <license>MIT</license>
+  
+  <url type="website">https://github.com/jerluenn/tdcr-crt</url>
+  <url type="bugtracker">https://github.com/jerluenn/tdcr-crt/issues</url>
+  
+  <depend>eigen</depend>
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  
+  <!-- The following tags are recommended by REP-136 -->
+  <exec_depend condition="$ROS_VERSION == 1">catkin</exec_depend>
+  <exec_depend condition="$ROS_VERSION == 2">ament_cmake</exec_depend>
+  <buildtool_depend>cmake</buildtool_depend>
+  <export>
+    <build_type>cmake</build_type>
+    <rosdoc config="${prefix}/doc/rosdoc.yaml"/>
+  </export>
+  
+</package>
