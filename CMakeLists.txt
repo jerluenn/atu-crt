@@ -45,6 +45,7 @@ find_package(PythonLibs REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system log_setup log REQUIRED)
+find_package(catkin REQUIRED COMPONENTS message_generation std_msgs sensor_msgs geometry_msgs roscpp)
 
 INCLUDE_DIRECTORIES(
 
@@ -117,8 +118,3 @@ FOREACH(TEST_FILE ${TEST_FILES})
 
 ENDFOREACH(TEST_FILE ${TEST_FILES})
 
-INSTALL(TARGETS TetherUnitTest MathUtils TetherUnit_Solver IntegratorInterface
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
