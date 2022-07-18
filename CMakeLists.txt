@@ -49,6 +49,7 @@ find_package(catkin REQUIRED COMPONENTS message_generation std_msgs sensor_msgs 
 
 INCLUDE_DIRECTORIES(
 
+  ${catkin_INCLUDE_DIRS}
 	${SOURCE_DIR}/tether_units
 	${acados_include}
 	${acados_include}/blasfeo/include/
@@ -103,6 +104,7 @@ ${acados_lib}/libacados.so)
 
 FOREACH(TEST_FILE ${TEST_FILES})
 
+  MESSAGE(STATUS ${TEST_FILE})
   FILE( GLOB LIBFILES ${LIB_PATH}/*.so)
 	GET_FILENAME_COMPONENT( EXEC_NAME ${TEST_FILE} NAME_WE)
 	ADD_EXECUTABLE(${EXEC_NAME} ${TEST_FILE})
@@ -111,6 +113,7 @@ FOREACH(TEST_FILE ${TEST_FILES})
   PUBLIC MathUtils
   PUBLIC IntegratorInterface 
   PRIVATE Eigen3::Eigen 
+  ${catkin_LIBRARIES}
   ${PYTHON_LIBRARIES} 
   ${acados_lib}/libacados.so
   ${LIBFILES}
