@@ -14,7 +14,6 @@
 #include <cassert>
 #include <chrono>
 #include <map>
-#include <ifopt/ipopt_solver.h>
 
 #define assertm(exp, msg) assert(((void)msg, exp))
 

@@ -59,18 +59,18 @@ class TetherUnit:
 
     def _removeOldData(self):
 
-        os.chdir(os.path.expanduser(self._workspace + "/atu-crt/lib/shared"))
+        os.chdir(os.path.expanduser(self._workspace + "/atu_crt/lib/shared"))
 
         os.system("rm *.so")
 
         self._dir_name = 'c_generated_code_' + self._robot_type
         os.chdir(os.path.expanduser(
-            self._workspace + "/atu-crt/src/tether_units/" + self._dir_name))
+            self._workspace + "/atu_crt/src/tether_units/" + self._dir_name))
 
         list_dir = [x[0] for x in os.walk(os.getcwd())]
         list_dir.pop(0)
 
-        if os.getcwd() == os.path.expanduser(self._workspace + "/atu-crt/src/tether_units/" + self._dir_name):
+        if os.getcwd() == os.path.expanduser(self._workspace + "/atu_crt/src/tether_units/" + self._dir_name):
 
             for file_name in os.listdir(os.getcwd()):
                 # construct full file path
@@ -98,7 +98,7 @@ class TetherUnit:
 
     def _exportData(self):
 
-        os.chdir(os.path.expanduser(self._workspace + "/atu-crt/src/tether_units"))
+        os.chdir(os.path.expanduser(self._workspace + "/atu_crt/src/tether_units"))
         
         os.chdir(self._dir_list[0])
 
@@ -119,7 +119,7 @@ class TetherUnit:
             replacedText2 = textToReplace2 + self._integrator_names[i]
 
             os.chdir(os.path.expanduser(
-                self._workspace + "/atu-crt/src/tether_units/" + self._dir_list[i]))
+                self._workspace + "/atu_crt/src/tether_units/" + self._dir_list[i]))
             fullFileName = "acados_sim_solver_" + self._integrator_names[i]
 
             # Read in the file
@@ -235,7 +235,7 @@ class TetherUnit:
         Sf = self._tether_length
 
         os.chdir(os.path.expanduser(
-            self._workspace + "/atu-crt/src/tether_units/"))
+            self._workspace + "/atu_crt/src/tether_units/"))
 
         sim.code_export_directory = self._dir_name + '/' + model_name
 
@@ -298,7 +298,7 @@ class TetherUnit:
         Sf = self._tether_length/self._integrationSteps
 
         os.chdir(os.path.expanduser(
-            self._workspace + "/atu-crt/src/tether_units/"))
+            self._workspace + "/atu_crt/src/tether_units/"))
 
         sim.code_export_directory = self._dir_name + '/' + model_name
 

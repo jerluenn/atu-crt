@@ -31,7 +31,10 @@ class TetherUnitBoundarySolver:
 
         builder = rod_parameterbuilder.Rod_Parameter_Builder()
         builder.createHollowRod(robot_dict)
-        self.tetherObject = tetherunit.TetherUnit(builder, sys.argv[1])
+        try:
+            self.tetherObject = tetherunit.TetherUnit(builder, sys.argv[1])
+        except: 
+            self.tetherObject = tetherunit.TetherUnit(builder)
 
     def set_and_integrate(self): 
 
@@ -205,8 +208,8 @@ if __name__ == "__main__":
     distalPose = np.array([-0.6, 0, 0.485, 1, 0, 0, 0])
     testClass = TetherUnitBoundarySolver(robot_dict, initConditions, distalPose)
     # testClass.solveBVP(True, True)
-    initConditions = np.array([0, 0, 0, 1, 0, 0, 0, -0.06701068308, 0, 0.1471605353, 0.0,
-   -0.05397767432, 0.0, 5, 0, 0.05, 0])
+#     initConditions = np.array([0, 0, 0, 1, 0, 0, 0, -0.06701068308, 0, 0.1471605353, 0.0,
+#    -0.05397767432, 0.0, 5, 0, 0.05, 0])
     test_Function(testClass, initConditions)
     test_Function2(testClass, testClass.initConditions)
     eig = getEigenvalues(testClass, testClass.initConditions)
