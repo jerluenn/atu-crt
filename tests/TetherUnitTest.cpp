@@ -26,12 +26,12 @@ int main ()
     Eigen::Matrix<double, 7, 1> poseDesired;
     poseDesired << -1.0, 0.5, 1.0, 1, 0, 0, 0 ;
     double mass_distribution = 0.035; 
-    double tether_length = 2.3;
+    double tether_length = 3.1;
     double g = 9.81;
     Eigen::MatrixXd proximalStates(17, 1);
-    proximalStates << 0, 0, 0, 1, 0, 0, 0, mass_distribution * tether_length * g, 0, 0, 0, 0.183972, 0, 0, 0, 0.05, 0;
+    proximalStates << 0, 0, 0, 1, 0, 0, 0, mass_distribution * tether_length * g, 0, 0, 0, 0.21544033, 0, 0, 0, 0.05, 0;
 
-    TetherUnit_Solver TSolver(&i1, &i2, 0.035, 2.3, 50, 50, 1, 1.0, proximalStates); 
+    TetherUnit_Solver TSolver(&i1, &i2, 0.035, 2.3, 50, 20, 1, 1.0, proximalStates); 
 
     std::cout.precision(10);
 
@@ -39,11 +39,19 @@ int main ()
 
     TSolver.timer.tic();
 
-    while (TSolver.getPoseError().norm() > 5e-3)
+    // while (TSolver.getPoseError().norm() > 5e-3)
+
+    Eigen::Matrix<double, 6, 1> tipWrench; 
+    tipWrench.setZero(); 
+    tipWrench(0, 0) = 0.002; 
+    tipWrench(4, 0) = -0.005;
+
+    for (int i = 0; i < 1500; ++i)
     
     {
 
-        TSolver.solveReactionForcesStep(poseDesired);
+        // TSolver.solveReactionForcesStep(poseDesired);
+        TSolver.simulateStep(tipWrench);
         std::cout << "poseError norm: " << TSolver.getPoseError().norm() << "\n\n";
         std::cout << "Boundary conditions norm: " << TSolver.getBoundaryConditions().norm() << "\n\n";
 

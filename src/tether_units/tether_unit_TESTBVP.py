@@ -164,10 +164,6 @@ class TetherUnitBoundarySolver:
 
         return residual
 
-def test_Function(testClass, initCondtions): 
-
-    testClass.initConditions = initCondtions
-    print(testClass.set_and_integrate())
 
 def test_Function2(testClass, initConditions):
 
@@ -182,6 +178,32 @@ def test_Function2(testClass, initConditions):
     testClass.plotData(True)
     plt.show()
     testClass.initConditions = testClass.distalConditions
+
+def solveIteratively(testClass, initConditions, numIterations): 
+
+    testClass.initConditions = initConditions 
+    rodData = np.zeros((11, 17))
+    rodData[0, :] = initConditions
+
+    for i in range(numIterations): 
+
+        data = testClass.set_and_integrate()
+        testClass.initConditions = data 
+        rodData[i+1, :] = data 
+
+    print("Done")
+
+    ax = plt.axes(projection='3d')
+    ax.set_xlabel('Z')
+    ax.set_xlim3d([0, 6])
+
+    ax.set_ylabel('Y')
+    ax.set_ylim3d([-0.1, 0.1])
+
+    # ax.set_zlim3d([0, self.boundary_length])
+    ax.set_zlabel('X')
+    ax.plot3D(rodData[:, 2], rodData[:, 1], -rodData[:, 0])
+    plt.show()
 
 def getEigenvalues(testClass, initConditions):
 
@@ -198,19 +220,19 @@ if __name__ == "__main__":
     robot_dict['inner_radius'] = 0.0006
     robot_dict['elastic_modulus'] = 1.80e9
     robot_dict['mass_distribution'] = 0.035
-    robot_dict['tether_length'] = 2.3
+    robot_dict['tether_length'] = 3.1
     robot_dict['shear_modulus'] = 0.75e9
     robot_dict['integration_steps'] = 50
 
-    # initConditions = np.array([0, 0, 0, 1, 0, 0, 0, -2, 0, 2, 0, -0.5, 0, 5, 0, 0.05])
+    initConditions = np.array([0, 0, 0, 1, 0, 0, 0, robot_dict['tether_length']*robot_dict['mass_distribution']*9.81*10, -7.21548500e-26, -3.62844316e-33, 4.22730307e-26,
+   0.21544033, -1.91589977e-24, 5, 0, 0.05, 0]) 
     initConditions = np.array([0, 0, 0, 1, 0, 0, 0, robot_dict['tether_length']*robot_dict['mass_distribution']*9.81, -7.21548500e-26, -3.62844316e-33, 4.22730307e-26,
-   0.180, -1.91589977e-24, 5, 0, 0.05, 0]) 
+   0.21544033, -1.91589977e-24, 5, 0, 0.05, 0]) 
+    initConditions = np.array([0, 0, 0, 1, 0, 0, 0, 1.094386, -7.21548500e-26, -3.62844316e-33, 4.22730307e-26,
+   0.2185876608, -1.91589977e-24, 5, 0, 0.05, 0]) 
     distalPose = np.array([-0.6, 0, 0.485, 1, 0, 0, 0])
     testClass = TetherUnitBoundarySolver(robot_dict, initConditions, distalPose)
-    # testClass.solveBVP(True, True)
-#     initConditions = np.array([0, 0, 0, 1, 0, 0, 0, -0.06701068308, 0, 0.1471605353, 0.0,
-#    -0.05397767432, 0.0, 5, 0, 0.05, 0])
-    test_Function(testClass, initConditions)
+    # solveIteratively(testClass, initConditions, 10)
     test_Function2(testClass, testClass.initConditions)
     eig = getEigenvalues(testClass, testClass.initConditions)
     print(testClass.distalConditions[16])
