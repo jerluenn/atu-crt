@@ -37,7 +37,7 @@ int main ()
 
     std::cout << "Boundary conditions" << TSolver.getBoundaryConditions() << "\n\n";
 
-    TSolver.timer.tic();
+    
 
     // while (TSolver.getPoseError().norm() > 5e-3)
 
@@ -50,14 +50,16 @@ int main ()
     
     {
 
+        TSolver.timer.tic();
         // TSolver.solveReactionForcesStep(poseDesired);
         TSolver.simulateStep(tipWrench);
         std::cout << "poseError norm: " << TSolver.getPoseError().norm() << "\n\n";
         std::cout << "Boundary conditions norm: " << TSolver.getBoundaryConditions().norm() << "\n\n";
+        TSolver.timer.toc();
 
     }
 
-    TSolver.timer.toc();
+    
 
     TSolver.integrateFullStates();
     TSolver.getFullStates("test.txt");
