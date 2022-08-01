@@ -220,16 +220,16 @@ if __name__ == "__main__":
     robot_dict['inner_radius'] = 0.0006
     robot_dict['elastic_modulus'] = 1.80e9
     robot_dict['mass_distribution'] = 0.035
-    robot_dict['tether_length'] = 3.1
+    robot_dict['tether_length'] = 0.51
     robot_dict['shear_modulus'] = 0.75e9
-    robot_dict['integration_steps'] = 50
+    robot_dict['integration_steps'] = 10
 
     initConditions = np.array([0, 0, 0, 1, 0, 0, 0, robot_dict['tether_length']*robot_dict['mass_distribution']*9.81*10, -7.21548500e-26, -3.62844316e-33, 4.22730307e-26,
    0.21544033, -1.91589977e-24, 5, 0, 0.05, 0]) 
     initConditions = np.array([0, 0, 0, 1, 0, 0, 0, robot_dict['tether_length']*robot_dict['mass_distribution']*9.81, -7.21548500e-26, -3.62844316e-33, 4.22730307e-26,
-   0.21544033, -1.91589977e-24, 5, 0, 0.05, 0]) 
-    initConditions = np.array([0, 0, 0, 1, 0, 0, 0, 1.094386, -7.21548500e-26, -3.62844316e-33, 4.22730307e-26,
-   0.2185876608, -1.91589977e-24, 5, 0, 0.05, 0]) 
+   0.049, -1.91589977e-24, 5, 0, 0.05, 0]) 
+#     initConditions = np.array([0, 0, 0, 1, 0, 0, 0, 1.094386, -7.21548500e-26, -3.62844316e-33, 4.22730307e-26,
+#    0.2185876608, -1.91589977e-24, 5, 0, 0.05, 0]) 
     distalPose = np.array([-0.6, 0, 0.485, 1, 0, 0, 0])
     testClass = TetherUnitBoundarySolver(robot_dict, initConditions, distalPose)
     # solveIteratively(testClass, initConditions, 10)
