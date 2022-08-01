@@ -247,6 +247,8 @@ class TetherUnit:
         sim.solver_options.integrator_type = 'ERK'
         sim.solver_options.num_stages = 4
         sim.solver_options.num_steps = self._integrationSteps
+        sim.solver_options.sens_forw = False
+        
 
         acados_integrator = AcadosSimSolver(sim)
 

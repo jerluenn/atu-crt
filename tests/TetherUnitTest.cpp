@@ -31,7 +31,7 @@ int main ()
     Eigen::MatrixXd proximalStates(17, 1);
     proximalStates << 0, 0, 0, 1, 0, 0, 0, mass_distribution * tether_length * g, 0, 0, 0, 0.21544033, 0, 0, 0, 0.05, 0;
 
-    TetherUnit_Solver TSolver(&i1, &i2, 0.035, 2.3, 50, 20, 1, 1.0, proximalStates); 
+    TetherUnit_Solver TSolver(&i1, &i2, 0.035, 2.3, 50, 10, 20, 1, 1.0, proximalStates); 
 
     std::cout.precision(10);
 

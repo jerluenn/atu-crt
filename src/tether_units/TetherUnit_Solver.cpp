@@ -25,10 +25,15 @@ TetherUnit_Solver::TetherUnit_Solver(IntegrationInterface* integrator_, Integrat
     Kp = Kp_;
     lambdaLyapunov = lambdaLyapunov_;
     lambdaDLS = lambdaDLS_;
-    initialise();
-    integrateDistalStates();
-    solveJacobians();
+    initialise(initialSolution);
+
+    integrateAllDistalStates();
+    solveAllJacobians();
     poseError << 1, 1, 1, 1, 1, 1, 1;
+
+    assertm(Kp_ > 0, "Kp must be positive.");
+    assertm(lambdaDLS_ > 0, "lambdaDLS must be positive.");
+    assertm(lambdaLyapunov_ > 0, "lambdaLyapunov must be positive.");
 
 }
 
@@ -46,23 +51,19 @@ void TetherUnit_Solver::initialise(Eigen::MatrixXd initialSolution)
     Eigen::MatrixXd zeros6x6(6, 6), zeros7x6(7, 6), zerosStates(numStates, 1); 
     zeros6x6.setZero(); 
     zeros7x6.setZero();
-    zeroStates.setZero();
+    zerosStates.setZero();
     Eigen::MatrixXd E_yu_tmp(6,6), B_yu_tmp(6,6), B_w_tip_tmp(6,6), E_w_tip_tmp(6,6);
     Eigen::MatrixXd J_w_tip_tmp(6,6), J_w_tip_eta_tmp(7,6), w_tip_dot_tmp(6,6);
     Eigen::MatrixXd yu_dot_w_tip_tmp(6,6), distalStates_tmp(numStates, 1), fullStates(num_integrationSteps*num_tetherParts + 1, numStates); 
-    Eigen::MatrixXd proximalStates_tmp(numStates, 1)
+    Eigen::MatrixXd proximalStates_tmp(numStates, 1);
 
     tipWrench << 0, 0, 0, 0, 0, 0;
     I_7x7.setIdentity();
-    assertm(proximalStates.rows() == initialSolution.rows(), "Proximal states and initial solution must be equal in size.");
-    assertm(Kp_ > 0, "Kp must be positive.");
-    assertm(lambdaDLS_ > 0, "lambdaDLS must be positive.");
-    assertm(lambdaLyapunov_ > 0, "lambdaLyapunov must be positive.");
     
     eta_dot.resize(4, 6);
     dummyStates.resize(numStates, 1);
 
-    for (int i = 0; i < num_tetherParts; ++i) 
+    for (unsigned int i = 0; i < num_tetherParts; ++i) 
     
     {
 
@@ -74,12 +75,13 @@ void TetherUnit_Solver::initialise(Eigen::MatrixXd initialSolution)
         J_w_tip_eta.push_back(zeros7x6);
         w_tip_dot.push_back(zeros6x6);
         yu_dot_w_tip.push_back(zeros6x6);
-        distalStates.push_back(zeroStates);
-        proximalStates.push_back(zeroStates);
+        distalStates.push_back(zerosStates);
+        proximalStates.push_back(zerosStates);
 
     }
 
     proximalStates[0] << initialSolution; 
+    assertm(proximalStates[0].rows() == initialSolution.rows(), "Proximal states and initial solution must be equal in size.");
 
 }
 
@@ -88,6 +90,28 @@ void TetherUnit_Solver::integrateDistalStates(unsigned int stage_num)
 {
 
     distalStates[stage_num] = integrator->integrate(proximalStates[stage_num]);
+
+}
+
+void TetherUnit_Solver::integrateAllDistalStates() 
+
+{
+
+    for (unsigned int i = 0; i < num_tetherParts; ++i) 
+    
+    {
+
+        integrateDistalStates(i); 
+
+        if (i != num_tetherParts - 1) 
+        
+        {
+
+            setInitialConditions(distalStates[i], i+1);
+
+        }
+
+    }
 
 }
 
@@ -104,6 +128,14 @@ Eigen::MatrixXd TetherUnit_Solver::getDistalStates(unsigned int stage_num)
 {
 
     return distalStates[stage_num];
+
+}
+
+Eigen::MatrixXd TetherUnit_Solver::getDistalStates() 
+
+{
+
+    return distalStates[num_tetherParts];
 
 }
 
@@ -130,7 +162,7 @@ void TetherUnit_Solver::integrateFullStates()
     // Meant for plotting entire arm.
 
     Eigen::MatrixXd states_i(numStates, 1);
-    states_i = proximalStates;
+    states_i = proximalStates[0];
     fullStates.block<1, 17>(0, 0) = states_i.transpose();  
 
     for (unsigned int i = 0; i < num_integrationSteps; ++i) 
@@ -152,12 +184,23 @@ void TetherUnit_Solver::setTau(double tau)
 
 }
 
+void TetherUnit_Solver::setInitialConditions(Eigen::MatrixXd initialConditions, unsigned int stage_num) 
+
+{
+
+    assertm(proximalStates[stage_num].rows() == initialConditions.rows(), "Initial Conditions must be the correct size!");
+    assertm(proximalStates[stage_num].cols() == initialConditions.cols(), "Initial Conditions must be the correct size!");
+   
+    proximalStates[stage_num] = initialConditions; 
+
+}
+
 void TetherUnit_Solver::setInitialConditions(Eigen::MatrixXd initialConditions) 
 
 {
 
-    assertm(proximalStates.rows() == initialConditions.rows(), "Initial Conditions must be the correct size!");
-    assertm(proximalStates.cols() == initialConditions.cols(), "Initial Conditions must be the correct size!");
+    assertm(proximalStates[0].rows() == initialConditions.rows(), "Initial Conditions must be the correct size!");
+    assertm(proximalStates[0].cols() == initialConditions.cols(), "Initial Conditions must be the correct size!");
    
     proximalStates[0] = initialConditions; 
 
@@ -194,7 +237,21 @@ Eigen::Matrix<double, 6, 1> TetherUnit_Solver::getBoundaryConditions_IncreaseWre
 
     internalTipWrench = distalStates[stage_num].block<6, 1>(num_eta + num_p , 0);
 
-    boundaryConditions = internalTipWrench - tipWrench_plus;
+    if (stage_num == num_tetherParts) 
+    
+    {
+
+        boundaryConditions = internalTipWrench - tipWrench_plus;        
+
+    } 
+
+    else 
+    
+    {
+
+        boundaryConditions = internalTipWrench - proximalStates[stage_num + 1].block<6, 1>(num_eta + num_p , 0);
+
+    }
 
     return boundaryConditions;
 
@@ -246,8 +303,8 @@ void TetherUnit_Solver::solveReactionForcesStep(Eigen::MatrixXd poseDesired)
     assertm(poseDesired.rows() == 7, "poseDesired must have 7 rows.");
     assertm(poseDesired.cols() == 1, "poseDesired must have 1 col.");
 
-    poseError = poseDesired - getDistalPose();
-    tipWrenchInput = Kp * J_w_tip_eta.transpose() * (J_w_tip_eta * J_w_tip_eta.transpose() + pow(lambdaDLS, 2)*I_7x7).inverse() * poseError;
+    poseError = poseDesired - getDistalPose(num_tetherParts);
+    tipWrenchInput = Kp * J_w_tip_eta[num_tetherParts].transpose() * (J_w_tip_eta[num_tetherParts] * J_w_tip_eta[num_tetherParts].transpose() + pow(lambdaDLS, 2)*I_7x7).inverse() * poseError;
     simulateStep(tipWrenchInput);
 
 }
@@ -261,9 +318,41 @@ Eigen::Matrix<double, 6, 1> TetherUnit_Solver::getBoundaryConditions(unsigned in
 
     internalTipWrench = distalStates[stage_num].block<6, 1>(num_eta + num_p , 0);
 
+    if (stage_num == num_tetherParts) 
+    
+    {
+
+        boundaryConditions = internalTipWrench - tipWrench;        
+
+    } 
+
+    else 
+    
+    {
+
+        boundaryConditions = internalTipWrench - proximalStates[stage_num + 1].block<6, 1>(num_eta + num_p , 0);
+
+    }
+
+    return boundaryConditions;
+
+}
+
+Eigen::Matrix<double, 6, 1> TetherUnit_Solver::getBoundaryConditions() 
+
+{
+
+    // Compute the total boundary conditions from stage 0 to stage N here. 
+
+    Eigen::Matrix<double, 6, 1> boundaryConditions; 
+    Eigen::Matrix<double, 6, 1> internalTipWrench;
+
+    internalTipWrench = distalStates[num_tetherParts - 1].block<6, 1>(num_eta + num_p , 0);
+
     boundaryConditions = internalTipWrench - tipWrench;
 
     return boundaryConditions;
+    
 
 }
 
@@ -302,6 +391,14 @@ Eigen::MatrixXd TetherUnit_Solver::getProximalStates(unsigned int stage_num) {
 
 }
 
+Eigen::MatrixXd TetherUnit_Solver::getProximalStates() 
+
+{
+
+    return proximalStates[0];
+
+}
+
 Eigen::MatrixXd TetherUnit_Solver::getFullStates(std::string fileName) 
 
 {
@@ -320,7 +417,7 @@ Eigen::MatrixXd TetherUnit_Solver::getFullStates()
 
 } 
 
-void TetherUnit_Solver::simulateStep(Eigen::Matrix<double, 6, 1> tip_wrench) 
+void TetherUnit_Solver::simulateStep(Eigen::Matrix<double, 6, 1> tip_wrench_rate) 
 
 {
 
@@ -330,24 +427,46 @@ void TetherUnit_Solver::simulateStep(Eigen::Matrix<double, 6, 1> tip_wrench)
     // solving using Jacobians backwards. Use Lyapunov step at every step to make sure 
     // that error remains very close to zero. 
 
-    solveJacobians(); 
+    solveAllJacobians(); 
 
-    d_yu = yu_dot_w_tip * tip_wrench; 
-    // d_yu -= lambdaLyapunov*B_yu.completeOrthogonalDecomposition().pseudoInverse()*(getBoundaryConditions() - (1/lambdaLyapunov)*tip_wrench*dt);
+    for (unsigned int i = num_tetherParts - 1; i == num_tetherParts; --i) 
+    
+    {
 
-    proximalStates.block<6, 1>(7, 0) += d_yu * dt; 
-    tipWrench += tip_wrench * dt ;
+        d_yu = yu_dot_w_tip[i] * tip_wrench_rate; 
+        // d_yu -= lambdaLyapunov*B_yu.completeOrthogonalDecomposition().pseudoInverse()*(getBoundaryConditions() - (1/lambdaLyapunov)*tip_wrench*dt);
 
-    integrateDistalStates();
+        proximalStates[i].block<6, 1>(7, 0) += d_yu * dt; 
+        tipWrench += tip_wrench_rate * dt ;
 
-    d_yu = -lambdaLyapunov*B_yu.completeOrthogonalDecomposition().pseudoInverse()*(getBoundaryConditions() - (1/lambdaLyapunov)*tip_wrench*dt);
+        integrateDistalStates(i);
 
-    proximalStates.block<6, 1>(7, 0) += d_yu * dt; 
-    integrateDistalStates();
+        d_yu = -lambdaLyapunov*B_yu[i].completeOrthogonalDecomposition().pseudoInverse()*(getBoundaryConditions(i) - (1/lambdaLyapunov)*tip_wrench_rate*dt);
+
+        proximalStates[i].block<6, 1>(7, 0) += d_yu * dt; 
+        integrateDistalStates(i);
+
+    }
+
+
 
 
 }
 
+void TetherUnit_Solver::solveAllJacobians()
+
+{
+
+    for (unsigned int i = 0; i < num_tetherParts - 1; ++i) 
+    
+    {
+
+        solveJacobians(i);
+
+    }
+
+
+}
 
 void TetherUnit_Solver::solveJacobians(unsigned int stage_num) 
 
@@ -357,10 +476,10 @@ void TetherUnit_Solver::solveJacobians(unsigned int stage_num)
     distalStates_Increment.resize(numStates, 1);
 
     Eigen::Matrix<double, 3, 1> position, positionPlus;
-    position = distalStates.block<3, 1>(0, 0);
+    position = distalStates[stage_num].block<3, 1>(0, 0);
 
     Eigen::Matrix<double, 4, 1> eta; 
-    eta = distalStates.block<4, 1>(3, 0);
+    eta = distalStates[stage_num].block<4, 1>(3, 0);
     Eigen::Matrix3d rotation, rotationPlus; 
     rotation = MathUtils::quat2Rot(eta);
 
@@ -412,7 +531,7 @@ void TetherUnit_Solver::solveJacobians(unsigned int stage_num)
 
     yu_dot_w_tip[stage_num] = -B_yu[stage_num].completeOrthogonalDecomposition().pseudoInverse()*B_w_tip[stage_num];
 
-    J_w_tip[stage_num] = E_yu * yu_dot_w_tip[stage_num];
+    J_w_tip[stage_num] = E_yu[stage_num] * yu_dot_w_tip[stage_num];
 
     w_tip_dot[stage_num] = (J_w_tip[stage_num].transpose()*J_w_tip[stage_num] + 0.1*I_6x6).inverse()*J_w_tip[stage_num].transpose();
 

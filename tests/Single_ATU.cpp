@@ -94,7 +94,7 @@ int main (int argc, char **argv)
     proximalStates << 0, 0, 0, 1, 0, 0, 0, mass_distribution * tether_length * g, 0, 0, 0, 0.21544033, 0, 0, 0, 0.05, 0;
     // position, orientation, internal wrenches, tau, alpha (s), kappa, curvature.
 
-    TetherUnit_Solver TSolver(&i1, &i2, 0.035, 3.1, 50, 0.5, 0.05, 0.2, proximalStates); 
+    TetherUnit_Solver TSolver(&i1, &i2, 0.035, 3.1, 50, 10, 0.5, 0.05, 0.2, proximalStates); 
 
     Single_ATU(&n, &TSolver);
 

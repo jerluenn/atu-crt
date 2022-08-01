@@ -25,27 +25,32 @@ class TetherUnit_Solver
         TetherUnit_Solver(IntegrationInterface* integrator_, IntegrationInterface* integratorStep_, double mass_distribution_, double tether_length_, unsigned int num_integrationSteps_, unsigned int num_tetherParts_, double lambdaLyapunov_, double lambdaDLS_, double Kp_, Eigen::MatrixXd initialSolution);
         TetherUnit_Solver(); 
         virtual ~TetherUnit_Solver(); 
-        Eigen::MatrixXd getProximalStates();
+        Eigen::MatrixXd getProximalStates(unsigned int stage_num);
         Eigen::MatrixXd getFullStates(std::string fileName);
         Eigen::MatrixXd getFullStates();
+        Eigen::MatrixXd getDistalStates(unsigned int stage_num);
+        Eigen::MatrixXd getProximalStates();
         Eigen::MatrixXd getDistalStates();
         unsigned int getNumIntegrationSteps();
-        Eigen::Matrix<double, 7, 1> getDistalPose();
-        Eigen::Matrix<double, 7, 6> getJacobianEta_wrt_tip(); 
-        void integrateDistalStates();
+        Eigen::Matrix<double, 7, 1> getDistalPose(unsigned int stage_num);
+        Eigen::Matrix<double, 7, 6> getJacobianEta_wrt_tip(unsigned int stage_num);
+        void integrateDistalStates(unsigned int stage_num); 
+        void integrateAllDistalStates(); 
         void integrateFullStates();
         void setInitialConditions(Eigen::MatrixXd initialConditions); 
         void setInitialConditions(Eigen::Matrix<double, 6, 1> initialConditions);
+        void setInitialConditions(Eigen::MatrixXd initialConditions, unsigned int stage_num);
         Eigen::Matrix<double, 6, 1> getTipWrench();
-
+        Eigen::Matrix<double, 6, 1> getBoundaryConditions(unsigned int stage_num);
         Eigen::Matrix<double, 6, 1> getBoundaryConditions();
-        Eigen::Matrix<double, 6, 1> getBoundaryConditions_IncreaseWrenchTip(unsigned int index);
-        Eigen::Matrix<double, 6, 1> getBoundaryConditions(Eigen::MatrixXd distalConditions_);
+        Eigen::Matrix<double, 6, 1> getBoundaryConditions_IncreaseWrenchTip(unsigned int index, unsigned int stage_num);
+        Eigen::Matrix<double, 6, 1> getBoundaryConditions(Eigen::MatrixXd distalConditions_, unsigned int stage_num);
         void setTipWrench(Eigen::Matrix<double, 6, 1> p_FM);
         void updateTipWrench(Eigen::Matrix<double, 6, 1> twist);
-        void simulateStep(Eigen::Matrix<double, 6, 1> tip_wrench);
+        void simulateStep(Eigen::Matrix<double, 6, 1> tip_wrench_rate);
         void setTau(double tau); 
-        void solveJacobians(); 
+        void solveJacobians(unsigned int stage_num); 
+        void solveAllJacobians();
         void solveReactionForcesStep(Eigen::MatrixXd poseDesired);
         Eigen::Matrix<double, 7, 1> getPoseError();
 
@@ -62,7 +67,7 @@ class TetherUnit_Solver
         Eigen::Matrix<double, 7, 7> I_7x7; 
         Eigen::MatrixXd J_test;
         void saveData(std::string fileName, Eigen::MatrixXd matrix);
-        Eigen::MatrixXd integrateWithIncrement(unsigned int index);
+        Eigen::MatrixXd integrateWithIncrement(unsigned int index, unsigned int stage_num);
         Eigen::Matrix<double, 6, 1> tipWrench, tipWrenchInput; // external tip wrench.
         double mass_distribution; 
         double total_tether_length; 
