@@ -29,9 +29,9 @@ int main ()
     double tether_length = 3.1;
     double g = 9.81;
     Eigen::MatrixXd proximalStates(17, 1);
-    proximalStates << 0, 0, 0, 1, 0, 0, 0, mass_distribution * tether_length * g, 0, 0, 0, 0.21544033, 0, 0, 0, 0.05, 0;
+    proximalStates << 0, 0, 0, 1, 0, 0, 0, mass_distribution * tether_length * g, 0, 0, 0, 0.215442772, 0, 0, 0, 0.05, 0;
 
-    TetherUnit_Solver TSolver(&i1, &i2, 0.035, 2.3, 50, 10, 20, 1, 1.0, proximalStates); 
+    TetherUnit_Solver TSolver(&i1, &i2, 0.035, tether_length, 50, 10, 50, 1, 1.0, proximalStates); 
 
     std::cout.precision(10);
 
@@ -43,10 +43,10 @@ int main ()
 
     Eigen::Matrix<double, 6, 1> tipWrench; 
     tipWrench.setZero(); 
-    tipWrench(0, 0) = 0.002; 
-    tipWrench(4, 0) = -0.005;
+    tipWrench(0, 0) = 0.125; 
+    tipWrench(4, 0) = -0.1;
 
-    for (int i = 0; i < 1500; ++i)
+    for (int i = 0; i < 100; ++i)
     
     {
 
@@ -55,14 +55,16 @@ int main ()
         TSolver.simulateStep(tipWrench);
         std::cout << "poseError norm: " << TSolver.getPoseError().norm() << "\n\n";
         std::cout << "Boundary conditions norm: " << TSolver.getBoundaryConditions().norm() << "\n\n";
+        std::cout << "Distal states: " << TSolver.getDistalStates() << "\n\n"; 
+        std::cout << "Tip Wrench: " << TSolver.getTipWrench() << "\n\n";
         TSolver.timer.toc();
 
     }
 
     
-
-    TSolver.integrateFullStates();
-    TSolver.getFullStates("test.txt");
+    // integrateAllDistalStates();
+    // TSolver.integrateFullStates();
+    // TSolver.getFullStates("test.txt");
 
     std::cout << "Proximal states: " << TSolver.getProximalStates() << "\n\n";
     std::cout << "Distal states: " << TSolver.getDistalStates() << "\n\n"; 
