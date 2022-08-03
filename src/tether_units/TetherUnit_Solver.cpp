@@ -46,9 +46,12 @@ TetherUnit_Solver::TetherUnit_Solver(IntegrationInterface* integrator_, Integrat
     fullStates.resize(num_integrationSteps + 1, numStates);
     Kp = Kp_;
     lambdaLyapunov = lambdaLyapunov_;
+    lambdaDLS_0 = lambdaDLS_;
     lambdaDLS = lambdaDLS_;
     integrateDistalStates();
     solveJacobians();
+    w_k = sqrt((J_w_tip_eta*J_w_tip_eta.transpose().determinant()));;
+    w_kminus1 = 1;
     poseError << 1, 1, 1, 1, 1, 1, 1;
 
 }
@@ -211,6 +214,9 @@ void TetherUnit_Solver::solveReactionForcesStep(Eigen::MatrixXd poseDesired)
     poseError = poseDesired - getDistalPose();
     tipWrenchInput = Kp * J_w_tip_eta.transpose() * (J_w_tip_eta * J_w_tip_eta.transpose() + pow(lambdaDLS, 2)*I_7x7).inverse() * poseError;
     simulateStep(tipWrenchInput);
+    w_kminus1 = w_k;
+    w_k = sqrt((J_w_tip_eta*J_w_tip_eta.transpose().determinant()));
+    lambdaDLS = lambdaDLS_0*(1 - w_k/w_kminus1);
 
 }
 
@@ -299,9 +305,22 @@ void TetherUnit_Solver::simulateStep(Eigen::Matrix<double, 6, 1> tip_wrench)
     integrateDistalStates();
 
     d_yu = -lambdaLyapunov*B_yu.completeOrthogonalDecomposition().pseudoInverse()*(getBoundaryConditions() - (1/lambdaLyapunov)*tip_wrench*dt);
-
     proximalStates.block<6, 1>(7, 0) += d_yu * dt; 
     integrateDistalStates();
+
+    while (getBoundaryConditions().norm() > 1e-3) 
+    
+    {
+        d_yu = -lambdaLyapunov*B_yu.completeOrthogonalDecomposition().pseudoInverse()*(getBoundaryConditions());
+        // std::cout << B_yu.completeOrthogonalDecomposition().pseudoInverse() << "\n\n\n";
+        // std::cout << getBoundaryConditions() - (1/lambdaLyapunov)*tip_wrench*dt << "\n\n\n";
+        // std::cout << d_yu << "\n\n\n";
+        std::cout << getBoundaryConditions().norm() << "\n\n\n\n\n";
+
+        proximalStates.block<6, 1>(7, 0) += d_yu * dt; 
+        integrateDistalStates();
+
+    }
 
 
 }

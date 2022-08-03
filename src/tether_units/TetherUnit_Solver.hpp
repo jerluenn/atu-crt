@@ -60,7 +60,6 @@ class TetherUnit_Solver
         Eigen::MatrixXd dummyStates;
         Eigen::Matrix<double, 7, 1> poseError;
         Eigen::Matrix<double, 7, 7> I_7x7; 
-        Eigen::MatrixXd J_test;
         void saveData(std::string fileName, Eigen::MatrixXd matrix);
         Eigen::MatrixXd integrateWithIncrement(unsigned int index);
         Eigen::Matrix<double, 6, 1> tipWrench, tipWrenchInput; // external tip wrench.
@@ -76,7 +75,10 @@ class TetherUnit_Solver
         IntegrationInterface* integratorStep;
         double lambdaLyapunov;
         double lambdaDLS;
+        double lambdaDLS_0;
         double Kp;
+        double w_k; 
+        double w_kminus1;
         double dt = 0.01;
 
 };
