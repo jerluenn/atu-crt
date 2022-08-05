@@ -24,14 +24,21 @@ int main ()
     Here, we set some inputs to test the Jacobians solved by TetherUnit_Solver. 
      */
     Eigen::Matrix<double, 7, 1> poseDesired;
-    poseDesired << -1.2, 0.5, 0.9, 1, 0, 0, 0 ;
+    poseDesired << 2.8, 0.0, 0.4, 1, 0, 0, 0 ;
     double mass_distribution = 0.035; 
     double tether_length = 3.1;
     double g = 9.81;
+    double w_t = 2500; 
+    double Kp = 0.50; 
+    double lambdaDLS = 5; 
+    double lambdaLyap = 50.0; 
+    unsigned int numIntegrationSteps = 50; 
+
     Eigen::MatrixXd proximalStates(17, 1);
     proximalStates << 0, 0, 0, 1, 0, 0, 0, mass_distribution * tether_length * g, 0, 0, 0, 0.21544033, 0, 0, 0, 0.05, 0;
 
-    TetherUnit_Solver TSolver(&i1, &i2, 0.035, 3.1, 50, 50, 5, 0.25, proximalStates); 
+    TetherUnit_Solver TSolver(&i1, &i2, mass_distribution, tether_length, numIntegrationSteps, 
+            lambdaLyap, lambdaDLS, w_t, Kp, proximalStates); 
 
     std::cout.precision(10);
 
@@ -43,22 +50,21 @@ int main ()
 
     Eigen::Matrix<double, 6, 1> tipWrench; 
     tipWrench.setZero(); 
-    tipWrench(0, 0) = -0.045; 
-    tipWrench(2, 0) = 0.003; 
-    // tipWrench(4, 0) = 0.0001;
+    tipWrench(0, 0) = -0.035; 
+    tipWrench(2, 0) = -0.0005; 
+    tipWrench(4, 0) = 0.0015;
 
     
-
-    for (int i = 0; i < 20000; ++i)
+    while (TSolver.getPoseError().norm() > 1e-2)
     
     {
 
         TSolver.timer.tic();
-        TSolver.solveReactionForcesStep(poseDesired);
-        // TSolver.simulateStep(tipWrench);
+        // TSolver.solveReactionForcesStep(poseDesired);
+        TSolver.simulateStep(tipWrench);
         // std::cout << "Jac: \n" << TSolver.getJacobianEta_wrt_tip() << "\n\n";
         std::cout << "poseError norm: " << TSolver.getPoseError().norm() << "\n\n";
-        // std::cout << "Proximal states: " << TSolver.getProximalStates().transpose() << "\n\n";
+        std::cout << "Proximal states: " << TSolver.getProximalStates().transpose() << "\n\n";
         std::cout << "Distal states: " << TSolver.getDistalStates().transpose() << "\n\n"; 
         // std::cout << "Tip Wrench: " << TSolver.getTipWrench() << "\n\n";
         if (std::isnan(TSolver.getPoseError().norm()))

@@ -87,14 +87,26 @@ int main (int argc, char **argv)
 
     IntegrationInterface i1(capsule), i2(capsule_step);
 
+    /* 
+    Here, we set some inputs to test the Jacobians solved by TetherUnit_Solver. 
+     */
+    Eigen::Matrix<double, 7, 1> poseDesired;
+    poseDesired << -1.2, 0.5, 0.9, 1, 0, 0, 0 ;
     double mass_distribution = 0.035; 
     double tether_length = 3.1;
     double g = 9.81;
+    double w_t = 0.5; 
+    double Kp = 0.25; 
+    double lambdaDLS = 6.0; 
+    double lambdaLyap = 50.0; 
+    unsigned int numIntegrationSteps = 50; 
+
     Eigen::MatrixXd proximalStates(17, 1);
     proximalStates << 0, 0, 0, 1, 0, 0, 0, mass_distribution * tether_length * g, 0, 0, 0, 0.21544033, 0, 0, 0, 0.05, 0;
-    // position, orientation, internal wrenches, tau, alpha (s), kappa, curvature.
 
-    TetherUnit_Solver TSolver(&i1, &i2, 0.035, 3.1, 50, 0.5, 0.05, 0.2, proximalStates); 
+    TetherUnit_Solver TSolver(&i1, &i2, mass_distribution, tether_length, numIntegrationSteps, 
+            lambdaLyap, lambdaDLS, w_t, Kp, proximalStates); 
+
 
     Single_ATU(&n, &TSolver);
 

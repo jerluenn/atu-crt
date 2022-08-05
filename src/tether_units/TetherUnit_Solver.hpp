@@ -22,7 +22,7 @@ class TetherUnit_Solver
 {
 
     public: 
-        TetherUnit_Solver(IntegrationInterface* integrator_, IntegrationInterface* integratorStep_, double mass_distribution_, double tether_length_, unsigned int num_integrationSteps_, double lambdaLyapunov_, double lambdaDLS_, double Kp_, Eigen::MatrixXd initialSolution);
+        TetherUnit_Solver(IntegrationInterface* integrator_, IntegrationInterface* integratorStep_, double mass_distribution_, double tether_length_, unsigned int num_integrationSteps_, double lambdaLyapunov_, double lambdaDLS_, double w_t_, double Kp_, Eigen::MatrixXd initialSolution);
         TetherUnit_Solver(); 
         virtual ~TetherUnit_Solver(); 
         Eigen::MatrixXd getProximalStates();
@@ -60,6 +60,7 @@ class TetherUnit_Solver
         Eigen::MatrixXd dummyStates;
         Eigen::Matrix<double, 7, 1> poseError;
         Eigen::Matrix<double, 7, 7> I_7x7; 
+        Eigen::Matrix<double, 6, 6> I_6x6; 
         void saveData(std::string fileName, Eigen::MatrixXd matrix);
         Eigen::MatrixXd integrateWithIncrement(unsigned int index);
         Eigen::Matrix<double, 6, 1> tipWrench, tipWrenchInput; // external tip wrench.
@@ -78,7 +79,7 @@ class TetherUnit_Solver
         double lambdaDLS_0;
         double Kp;
         double w_k; 
-        double w_kminus1;
+        double w_t;
         double dt = 0.01;
 
 };

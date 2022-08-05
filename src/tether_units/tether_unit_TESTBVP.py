@@ -178,6 +178,7 @@ def test_Function2(testClass, initConditions):
     testClass.plotData(True)
     plt.show()
     testClass.initConditions = testClass.distalConditions
+    print(testClass.distalConditions)
 
 def solveIteratively(testClass, initConditions, numIterations): 
 
@@ -228,7 +229,8 @@ if __name__ == "__main__":
    0.21544033, -1.91589977e-24, 5, 0, 0.05, 0]) 
     initConditions = np.array([0, 0, 0, 1, 0, 0, 0, robot_dict['tether_length']*robot_dict['mass_distribution']*9.81, -7.21548500e-26, -3.62844316e-33, 4.22730307e-26,
    0.21544033, -1.91589977e-24, 5, 0, 0.05, 0]) 
-    initConditions = np.array([0, 0, 0, 1, 0, 0, 0, 0.07137914039,  0.06085019084,  0.01274192968,  -0.0318431958, -0.03347087948, -0.002215543074, 5, 0, 0.05, 0]) 
+    initConditions = np.array([0, 0, 0, 1, 0, 0, 0,    0.2282620207,  0.003335972522,  -0.08855790025,  -0.02244771316,-0.0001258090004, -0.003445594145
+, 5, 0, 0.05, 0]) 
     distalPose = np.array([-0.6, 0, 0.485, 1, 0, 0, 0])
     testClass = TetherUnitBoundarySolver(robot_dict, initConditions, distalPose)
     # solveIteratively(testClass, initConditions, 10)
