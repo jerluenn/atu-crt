@@ -221,7 +221,7 @@ if __name__ == "__main__":
     robot_dict['inner_radius'] = 0.0006
     robot_dict['elastic_modulus'] = 1.80e9
     robot_dict['mass_distribution'] = 0.035
-    robot_dict['tether_length'] = 2.3
+    robot_dict['tether_length'] = 3.1
     robot_dict['shear_modulus'] = 0.75e9
     robot_dict['integration_steps'] = 50
 
