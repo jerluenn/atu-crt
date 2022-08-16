@@ -143,7 +143,7 @@ class TetherUnitBoundarySolver:
         ax.set_xlim3d([0, self.boundary_length])
         ax.set_xlabel('Z')
 
-        ax.set_ylim3d([-self.boundary_length/4, self.boundary_length/4])
+        ax.set_ylim3d([-self.boundary_length/2, self.boundary_length/2])
         ax.set_ylabel('Y')
 
         # ax.set_zlim3d([0, self.boundary_length])
@@ -199,7 +199,7 @@ def solveIteratively(testClass, initConditions, numIterations):
     ax.set_xlim3d([0, 6])
 
     ax.set_ylabel('Y')
-    ax.set_ylim3d([-0.1, 0.1])
+    ax.set_ylim3d([-1.5, 1.5])
 
     # ax.set_zlim3d([0, self.boundary_length])
     ax.set_zlabel('X')
@@ -229,8 +229,7 @@ if __name__ == "__main__":
    0.21544033, -1.91589977e-24, 5, 0, 0.05, 0]) 
     initConditions = np.array([0, 0, 0, 1, 0, 0, 0, robot_dict['tether_length']*robot_dict['mass_distribution']*9.81, -7.21548500e-26, -3.62844316e-33, 4.22730307e-26,
    0.21544033, -1.91589977e-24, 5, 0, 0.05, 0]) 
-    initConditions = np.array([0, 0, 0, 1, 0, 0, 0,    0.2282620207,  0.003335972522,  -0.08855790025,  -0.02244771316,-0.0001258090004, -0.003445594145
-, 5, 0, 0.05, 0]) 
+    initConditions = np.array([0, 0, 0, 1, 0, 0, 0, 0.198365537,  1.815506718e-06,  -0.002486350041, -1.362958345e-06,    0.01586222033, -3.407464989e-07, 5, 0, 0.05, 0]) 
     distalPose = np.array([-0.6, 0, 0.485, 1, 0, 0, 0])
     testClass = TetherUnitBoundarySolver(robot_dict, initConditions, distalPose)
     # solveIteratively(testClass, initConditions, 10)

@@ -54,7 +54,7 @@ class TetherUnit_Solver
     private: 
 
         Eigen::MatrixXd fullStates; 
-        Eigen::MatrixXd E_yu, B_yu, E_w_tip, B_w_tip, J_w_tip, yu_dot_w_tip, eta_dot, w_tip_dot, J_w_tip_eta; 
+        Eigen::MatrixXd E_yu, B_yu, E_w_tip, B_w_tip, J_w_tip, yu_dot_w_tip, eta_dot, w_tip_dot, J_w_tip_eta, E_yu_eta; 
         Eigen::MatrixXd distalStates;
         Eigen::MatrixXd proximalStates;
         Eigen::MatrixXd dummyStates;
@@ -63,7 +63,7 @@ class TetherUnit_Solver
         Eigen::Matrix<double, 6, 6> I_6x6; 
         void saveData(std::string fileName, Eigen::MatrixXd matrix);
         Eigen::MatrixXd integrateWithIncrement(unsigned int index);
-        Eigen::Matrix<double, 6, 1> tipWrench, tipWrenchInput; // external tip wrench.
+        Eigen::Matrix<double, 6, 1> tipWrench, tipWrenchInput, d_yu_input; // external tip wrench.
         double mass_distribution; 
         double tether_length;
         const unsigned int numStates = 17; 

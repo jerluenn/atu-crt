@@ -11,6 +11,7 @@ int main ()
     Here, we get the integration solvers from the acados include directories. 
     */
 
+    Eigen::IOFormat OctaveFmt(Eigen::StreamPrecision, 0, ", ", ";\n", "", "", "[", "]");
 
     sim_solver_capsule *capsule = tetherunit_integrator_acados_sim_solver_create_capsule(); 
     tetherunit_integrator_acados_sim_create(capsule); 
@@ -24,13 +25,13 @@ int main ()
     Here, we set some inputs to test the Jacobians solved by TetherUnit_Solver. 
      */
     Eigen::Matrix<double, 7, 1> poseDesired;
-    poseDesired << 2.8, 0.0, 0.4, 1, 0, 0, 0 ;
+    poseDesired << -2.5, -0.0, 1.2, 1, 0, 0, 0 ;
     double mass_distribution = 0.035; 
     double tether_length = 3.1;
     double g = 9.81;
-    double w_t = 2500; 
-    double Kp = 0.50; 
-    double lambdaDLS = 5; 
+    double w_t = 5000; 
+    double Kp = 0.25; 
+    double lambdaDLS = 100; 
     double lambdaLyap = 50.0; 
     unsigned int numIntegrationSteps = 50; 
 
@@ -60,11 +61,13 @@ int main ()
     {
 
         TSolver.timer.tic();
-        // TSolver.solveReactionForcesStep(poseDesired);
-        TSolver.simulateStep(tipWrench);
+        TSolver.solveReactionForcesStep(poseDesired);
+        tipWrench = TSolver.getDistalStates().block<6, 1>(7, 0);
+        TSolver.setTipWrench(tipWrench); 
+        // TSolver.simulateStep(tipWrench);
         // std::cout << "Jac: \n" << TSolver.getJacobianEta_wrt_tip() << "\n\n";
         std::cout << "poseError norm: " << TSolver.getPoseError().norm() << "\n\n";
-        std::cout << "Proximal states: " << TSolver.getProximalStates().transpose() << "\n\n";
+        std::cout << "Proximal states: " << TSolver.getProximalStates().transpose().format(OctaveFmt) << "\n\n";
         std::cout << "Distal states: " << TSolver.getDistalStates().transpose() << "\n\n"; 
         // std::cout << "Tip Wrench: " << TSolver.getTipWrench() << "\n\n";
         if (std::isnan(TSolver.getPoseError().norm()))

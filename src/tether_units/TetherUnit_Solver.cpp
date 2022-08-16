@@ -20,6 +20,8 @@ TetherUnit_Solver::TetherUnit_Solver(IntegrationInterface* integrator_, Integrat
     num_kappa = 1;
     num_tau = 1;
 
+    E_yu_eta.resize(7, 6);
+    E_yu_eta.setZero();
     E_yu.resize(6, 6); 
     B_yu.resize(6, 6); 
     B_yu.setZero();
@@ -50,9 +52,9 @@ TetherUnit_Solver::TetherUnit_Solver(IntegrationInterface* integrator_, Integrat
     lambdaDLS_0 = lambdaDLS_;
     integrateDistalStates();
     solveJacobians();
-    w_k = sqrt((J_w_tip_eta*J_w_tip_eta.transpose()).determinant());;
+    w_k = sqrt((E_yu*E_yu.transpose()).determinant());;
     w_t = w_t_; 
-    lambdaDLS = lambdaDLS_0*(1 - w_k/w_t);
+    lambdaDLS = lambdaDLS_0;
     poseError << 1, 1, 1, 1, 1, 1, 1;
 
 }
@@ -212,32 +214,35 @@ void TetherUnit_Solver::solveReactionForcesStep(Eigen::MatrixXd poseDesired)
     assertm(poseDesired.rows() == 7, "poseDesired must have 7 rows.");
     assertm(poseDesired.cols() == 1, "poseDesired must have 1 col.");
 
-    if (w_t > w_k) 
+    // if (w_t > w_k) 
     
-    {
+    // {
 
-        lambdaDLS = lambdaDLS_0*(1 - w_k/w_t);
+    //     lambdaDLS = lambdaDLS_0*(1 - w_k/w_t);
 
-    }
+    // }
 
-    else 
+    // else 
     
-    {
+    // {
 
-        lambdaDLS = 1.5;
+    //     lambdaDLS = 100;
 
-    }
+    // }
 
+    solveJacobians();
     poseError = poseDesired - getDistalPose();
-    tipWrenchInput = Kp * J_w_tip_eta.transpose() * (J_w_tip_eta * J_w_tip_eta.transpose() + lambdaDLS*I_7x7).inverse() * poseError;
-    simulateStep(tipWrenchInput);
-    w_k = sqrt((J_w_tip_eta*J_w_tip_eta.transpose()).determinant());
+    d_yu_input = Kp * E_yu_eta.transpose() * (E_yu_eta * E_yu_eta.transpose() + lambdaDLS*I_7x7).inverse() * poseError;
+    // d_yu_input = - 0.05 * E_yu_eta.completeOrthogonalDecomposition().pseudoInverse() * poseError;
+    proximalStates.block<6, 1>(7, 0) += d_yu_input * dt; 
+    integrateDistalStates();
+    // simulateStep(tipWrenchInput);
+    // w_k = sqrt((E_yu_eta*E_yu_eta.transpose()).determinant());
 
-    std::cout << "w_k: " << w_k << "\n\n";
-    std::cout << "tipWrenchInput: " << tipWrenchInput.transpose() << "\n\n";
+    // std::cout << "w_k: " << w_k << "\n\n";
+    // std::cout << "E_yu_eta: \n " << E_yu_eta << "\n\n";
+    std::cout << "d_yu_input: " << d_yu_input.transpose() << "\n\n";
 
-
-    
 
 
 }
@@ -422,6 +427,9 @@ void TetherUnit_Solver::solveJacobians()
     eta_dot = conv*J_w_tip.block<3, 6>(3, 0);
 
     J_w_tip_eta << J_w_tip.block<3, 6>(0,0), eta_dot;
+
+    eta_dot = conv*E_yu.block<3, 6>(3, 0);
+    E_yu_eta << E_yu.block<3, 6>(0,0), eta_dot;
 
 
 }
