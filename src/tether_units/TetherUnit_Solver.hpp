@@ -58,6 +58,7 @@ class TetherUnit_Solver
         Eigen::MatrixXd distalStates;
         Eigen::MatrixXd proximalStates;
         Eigen::MatrixXd dummyStates;
+        Eigen::Matrix<double, 6, 1> prevProximalStates;
         Eigen::Matrix<double, 7, 1> poseError;
         Eigen::Matrix<double, 7, 7> I_7x7; 
         Eigen::Matrix<double, 6, 6> I_6x6; 
@@ -81,6 +82,7 @@ class TetherUnit_Solver
         double w_k; 
         double w_t;
         double dt = 0.01;
+        double prevLambdaDLS;
 
 };
 

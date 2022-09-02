@@ -25,18 +25,19 @@ int main ()
     Here, we set some inputs to test the Jacobians solved by TetherUnit_Solver. 
      */
     Eigen::Matrix<double, 7, 1> poseDesired;
-    poseDesired << -0.8, -1.00, 2.64, 0.998342, 0.002261, 0.007128, -0.057 ;
+    poseDesired << -0.664, -0.869, 2.79, 1, 0, 0, 0 ;
     double mass_distribution = 0.035; 
     double tether_length = 3.1;
     double g = 9.81;
     double w_t = 5000; 
-    double Kp = 0.5; 
+    double Kp = 0.25; 
     double lambdaDLS = 10.0; 
     double lambdaLyap = 50.0; 
     unsigned int numIntegrationSteps = 50; 
 
     Eigen::MatrixXd proximalStates(17, 1);
-    proximalStates << 0, 0, 0, 1, 0, 0, 0, 0.1386458473,  5.394324155e-06,    0.03407331879, -3.025669809e-06,  -0.005150430889, -3.501944344e-07, 0, 0, 0.05, 0;
+    // proximalStates << 0, 0, 0, 1, 0, 0, 0, 0.1386458473,  5.394324155e-06,    0.03407331879, -3.025669809e-06,  -0.005150430889, -3.501944344e-07, 0, 0, 0.05, 0;
+    proximalStates << 0, 0, 0, 1, 0, 0, 0, 0.2915455717,   0.001093639063,     0.3170625413, -0.0002882279196,    0.05240783337, -2.706930693e-05, 0, 0, 0.05, 0;
 
     TetherUnit_Solver TSolver(&i1, &i2, mass_distribution, tether_length, numIntegrationSteps, 
             lambdaLyap, lambdaDLS, w_t, Kp, proximalStates); 

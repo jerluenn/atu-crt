@@ -214,35 +214,45 @@ void TetherUnit_Solver::solveReactionForcesStep(Eigen::MatrixXd poseDesired)
     assertm(poseDesired.rows() == 7, "poseDesired must have 7 rows.");
     assertm(poseDesired.cols() == 1, "poseDesired must have 1 col.");
 
-    // if (w_t > w_k) 
-    
-    // {
-
-    //     lambdaDLS = lambdaDLS_0*(1 - w_k/w_t);
-
-    // }
-
-    // else 
-    
-    // {
-
-    //     lambdaDLS = 100;
-
-    // }
 
     solveJacobians();
     poseError = poseDesired - getDistalPose();
     d_yu_input = Kp * E_yu_eta.transpose() * (E_yu_eta * E_yu_eta.transpose() + lambdaDLS*I_7x7).inverse() * poseError;
-    // d_yu_input = - 0.05 * E_yu_eta.completeOrthogonalDecomposition().pseudoInverse() * poseError;
+    prevProximalStates = proximalStates.block<6, 1>(7, 0);
+    prevLambdaDLS = lambdaDLS;
     proximalStates.block<6, 1>(7, 0) += d_yu_input * dt; 
     integrateDistalStates();
-    // simulateStep(tipWrenchInput);
-    // w_k = sqrt((E_yu_eta*E_yu_eta.transpose()).determinant());
 
-    // std::cout << "w_k: " << w_k << "\n\n";
-    // std::cout << "E_yu_eta: \n " << E_yu_eta << "\n\n";
+    if ((poseDesired - getDistalPose()).norm() > poseError.norm()) 
+    
+    {
+
+        // Reject step. 
+
+        proximalStates.block<6, 1>(7, 0) = prevProximalStates;
+        lambdaDLS *= 2.5; 
+
+    }
+
+    else 
+    
+    {
+
+        lambdaDLS = lambdaDLS*0.8; 
+
+    }
+
+    if ((lambdaDLS > 1e8) || lambdaDLS < 1e-1) 
+    
+    {
+
+        lambdaDLS = prevLambdaDLS;
+
+    }
+
+    std::cout << "lambdaDLS: " << lambdaDLS << "\n\n";
     std::cout << "d_yu_input: " << d_yu_input.transpose() << "\n\n";
-
+    // std::cout << "Estimated Hessian: " << E_yu_eta * E_yu_eta.transpose() << "\n\n";
 
 
 }
